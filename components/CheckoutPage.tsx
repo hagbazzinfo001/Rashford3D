@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import {
   CreditCard,
   Lock,
   Truck,
@@ -21,9 +22,9 @@ import {
   Gift,
   AlertCircle,
   Info,
-} from 'lucide-react';
-import { useCart } from '@/contexts/CartContext';
-import { toast } from 'react-hot-toast';
+} from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "react-hot-toast";
 
 interface CheckoutPageProps {
   onNavigate: (page: string, data?: any) => void;
@@ -32,51 +33,87 @@ interface CheckoutPageProps {
   user: any;
   onOrderComplete: (orderData: any) => void;
 }
+interface CheckoutFormData {
+  // Shipping
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
 
-export default function CheckoutPage({ 
-  onNavigate, 
-  cartItems, 
-  cartTotal, 
+  // Billing
+  billingDifferent: boolean;
+  billingFirstName: string;
+  billingLastName: string;
+  billingAddress: string;
+  billingCity: string;
+  billingState: string;
+  billingZipCode: string;
+  billingCountry: string;
+
+  // Payment
+  cardNumber: string;
+  expiryDate: string;
+  cvv: string;
+  cardName: string;
+
+  // Delivery
+  shippingMethod: string;
+  deliveryInstructions: string;
+  giftMessage: string;
+  isGift: boolean;
+}
+
+export default function CheckoutPage({
+  onNavigate,
+  cartItems,
+  cartTotal,
   user,
-  onOrderComplete 
+  onOrderComplete,
 }: CheckoutPageProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CheckoutFormData>({
     // Shipping Information
-    firstName: user?.name?.split(' ')[0] || '',
-    lastName: user?.name?.split(' ')[1] || '',
-    email: user?.email || '',
-    phone: '',
-    address: user?.address?.street || '',
-    city: user?.address?.city || '',
-    state: user?.address?.state || '',
-    zipCode: user?.address?.zipCode || '',
-    country: user?.address?.country || 'United States',
-    
+    firstName: user?.name?.split(" ")[0] || "",
+    lastName: user?.name?.split(" ")[1] || "",
+    email: user?.email || "",
+    phone: "",
+    address: user?.address?.street || "",
+    city: user?.address?.city || "",
+    state: user?.address?.state || "",
+    zipCode: user?.address?.zipCode || "",
+    country: user?.address?.country || "United States",
+
     // Billing Information
     billingDifferent: false,
-    billingFirstName: '',
-    billingLastName: '',
-    billingAddress: '',
-    billingCity: '',
-    billingState: '',
-    billingZipCode: '',
-    billingCountry: 'United States',
-    
+    billingFirstName: "",
+    billingLastName: "",
+    billingAddress: "",
+    billingCity: "",
+    billingState: "",
+    billingZipCode: "",
+    billingCountry: "United States",
+
     // Payment Information
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    cardName: '',
-    
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
+    cardName: "",
+
     // Delivery Options
-    shippingMethod: 'standard',
-    deliveryInstructions: '',
-    giftMessage: '',
+    shippingMethod: "standard",
+    deliveryInstructions: "",
+    giftMessage: "",
     isGift: false,
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof CheckoutFormData, string>>
+  >({});
 
   const { getCartSubtotal, getCartTax, getCartShipping, clearCart } = useCart();
 
@@ -86,76 +123,92 @@ export default function CheckoutPage({
   const total = subtotal + tax + shipping;
 
   const steps = [
-    { id: 1, title: 'Shipping', icon: Truck },
-    { id: 2, title: 'Payment', icon: CreditCard },
-    { id: 3, title: 'Review', icon: Check },
+    { id: 1, title: "Shipping", icon: Truck },
+    { id: 2, title: "Payment", icon: CreditCard },
+    { id: 3, title: "Review", icon: Check },
   ];
 
   const shippingMethods = [
     {
-      id: 'standard',
-      name: 'Standard Shipping',
-      description: '5-7 business days',
+      id: "standard",
+      name: "Standard Shipping",
+      description: "5-7 business days",
       price: shipping,
       icon: Package,
     },
     {
-      id: 'express',
-      name: 'Express Shipping',
-      description: '2-3 business days',
+      id: "express",
+      name: "Express Shipping",
+      description: "2-3 business days",
       price: 15.99,
       icon: Clock,
     },
     {
-      id: 'overnight',
-      name: 'Overnight Shipping',
-      description: 'Next business day',
+      id: "overnight",
+      name: "Overnight Shipping",
+      description: "Next business day",
       price: 29.99,
       icon: ArrowRight,
     },
   ];
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = <K extends keyof CheckoutFormData>(
+    field: K,
+    value: CheckoutFormData[K]
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
-  const validateStep = (step) => {
-    const newErrors = {};
-
+  const validateStep = (step: number) => {
+    const newErrors: Partial<Record<keyof CheckoutFormData, string>> = {};
     if (step === 1) {
       // Shipping validation
-      if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-      if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
-      if (!formData.email.trim()) newErrors.email = 'Email is required';
-      else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
-      if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
-      if (!formData.address.trim()) newErrors.address = 'Address is required';
-      if (!formData.city.trim()) newErrors.city = 'City is required';
-      if (!formData.state.trim()) newErrors.state = 'State is required';
-      if (!formData.zipCode.trim()) newErrors.zipCode = 'ZIP code is required';
+      if (!formData.firstName.trim())
+        newErrors.firstName = "First name is required";
+      if (!formData.lastName.trim())
+        newErrors.lastName = "Last name is required";
+      if (!formData.email.trim()) newErrors.email = "Email is required";
+      else if (!/\S+@\S+\.\S+/.test(formData.email))
+        newErrors.email = "Email is invalid";
+      if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+      if (!formData.address.trim()) newErrors.address = "Address is required";
+      if (!formData.city.trim()) newErrors.city = "City is required";
+      if (!formData.state.trim()) newErrors.state = "State is required";
+      if (!formData.zipCode.trim()) newErrors.zipCode = "ZIP code is required";
 
       // Billing validation if different
       if (formData.billingDifferent) {
-        if (!formData.billingFirstName.trim()) newErrors.billingFirstName = 'Billing first name is required';
-        if (!formData.billingLastName.trim()) newErrors.billingLastName = 'Billing last name is required';
-        if (!formData.billingAddress.trim()) newErrors.billingAddress = 'Billing address is required';
-        if (!formData.billingCity.trim()) newErrors.billingCity = 'Billing city is required';
-        if (!formData.billingState.trim()) newErrors.billingState = 'Billing state is required';
-        if (!formData.billingZipCode.trim()) newErrors.billingZipCode = 'Billing ZIP code is required';
+        if (!formData.billingFirstName.trim())
+          newErrors.billingFirstName = "Billing first name is required";
+        if (!formData.billingLastName.trim())
+          newErrors.billingLastName = "Billing last name is required";
+        if (!formData.billingAddress.trim())
+          newErrors.billingAddress = "Billing address is required";
+        if (!formData.billingCity.trim())
+          newErrors.billingCity = "Billing city is required";
+        if (!formData.billingState.trim())
+          newErrors.billingState = "Billing state is required";
+        if (!formData.billingZipCode.trim())
+          newErrors.billingZipCode = "Billing ZIP code is required";
       }
     }
 
     if (step === 2) {
       // Payment validation
-      if (!formData.cardNumber.trim()) newErrors.cardNumber = 'Card number is required';
-      else if (formData.cardNumber.replace(/\s/g, '').length < 16) newErrors.cardNumber = 'Card number is invalid';
-      if (!formData.expiryDate.trim()) newErrors.expiryDate = 'Expiry date is required';
-      if (!formData.cvv.trim()) newErrors.cvv = 'CVV is required';
-      else if (formData.cvv.length < 3) newErrors.cvv = 'CVV is invalid';
-      if (!formData.cardName.trim()) newErrors.cardName = 'Cardholder name is required';
+      if (!formData.cardNumber.trim())
+        newErrors.cardNumber = "Card number is required";
+      else if (formData.cardNumber.replace(/\s/g, "").length < 16)
+        newErrors.cardNumber = "Card number is invalid";
+      if (!formData.expiryDate.trim())
+        newErrors.expiryDate = "Expiry date is required";
+      if (!formData.cvv.trim()) newErrors.cvv = "CVV is required";
+      else if (formData.cvv.length < 3) newErrors.cvv = "CVV is invalid";
+      if (!formData.cardName.trim())
+        newErrors.cardName = "Cardholder name is required";
     }
 
     setErrors(newErrors);
@@ -164,65 +217,67 @@ export default function CheckoutPage({
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, 3));
+      setCurrentStep((prev) => Math.min(prev + 1, 3));
     }
   };
 
   const handlePrevious = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
   const handleSubmit = async () => {
     if (!validateStep(currentStep)) return;
 
     setIsProcessing(true);
-    
+
     try {
       // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
       const orderData = {
-        orderId: 'ORD-' + Date.now(),
+        orderId: "ORD-" + Date.now(),
         total: total.toFixed(2),
         itemCount: cartItems.length,
         items: cartItems,
         shipping: formData,
         payment: {
-          method: 'Credit Card',
+          method: "Credit Card",
           last4: formData.cardNumber.slice(-4),
         },
-        estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+        estimatedDelivery: new Date(
+          Date.now() + 7 * 24 * 60 * 60 * 1000
+        ).toLocaleDateString(),
       };
 
       clearCart();
       onOrderComplete(orderData);
-      toast.success('Order placed successfully!');
+      toast.success("Order placed successfully!");
     } catch (error) {
-      toast.error('Payment failed. Please try again.');
+      toast.error("Payment failed. Please try again.");
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const formatCardNumber = (value) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+  const formatCardNumber = (value: string) => {
+    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
     const matches = v.match(/\d{4,16}/g);
-    const match = matches && matches[0] || '';
+    const match = (matches && matches[0]) || "";
     const parts = [];
     for (let i = 0, len = match.length; i < len; i += 4) {
       parts.push(match.substring(i, i + 4));
     }
     if (parts.length) {
-      return parts.join(' ');
+      return parts.join(" ");
     } else {
       return v;
     }
   };
 
-  const formatExpiryDate = (value) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+  const formatExpiryDate = (value: string) => {
+    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
     if (v.length >= 2) {
-      return v.substring(0, 2) + '/' + v.substring(2, 4);
+      return v.substring(0, 2) + "/" + v.substring(2, 4);
     }
     return v;
   };
@@ -232,8 +287,10 @@ export default function CheckoutPage({
       <div className="min-h-screen bg-gray-50 pt-20 flex items-center justify-center">
         <div className="text-center">
           <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Your cart is empty</h2>
-          <button onClick={() => onNavigate('shop')} className="btn-primary">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Your cart is empty
+          </h2>
+          <button onClick={() => onNavigate("shop")} className="btn-primary">
             Continue Shopping
           </button>
         </div>
@@ -246,11 +303,17 @@ export default function CheckoutPage({
       <div className="container mx-auto px-4 py-8">
         {/* Breadcrumbs */}
         <div className="breadcrumbs mb-8">
-          <button onClick={() => onNavigate('home')} className="breadcrumb-item">
+          <button
+            onClick={() => onNavigate("home")}
+            className="breadcrumb-item"
+          >
             Home
           </button>
           <span className="breadcrumb-separator">/</span>
-          <button onClick={() => onNavigate('cart')} className="breadcrumb-item">
+          <button
+            onClick={() => onNavigate("cart")}
+            className="breadcrumb-item"
+          >
             Cart
           </button>
           <span className="breadcrumb-separator">/</span>
@@ -259,8 +322,12 @@ export default function CheckoutPage({
 
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Secure Checkout</h1>
-          <p className="text-gray-600">Complete your order in just a few steps</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Secure Checkout
+          </h1>
+          <p className="text-gray-600">
+            Complete your order in just a few steps
+          </p>
         </div>
 
         {/* Progress Steps */}
@@ -270,19 +337,29 @@ export default function CheckoutPage({
               const Icon = step.icon;
               const isActive = currentStep === step.id;
               const isCompleted = currentStep > step.id;
-              
+
               return (
                 <div key={step.id} className="flex items-center">
-                  <div className={`step-indicator ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}>
+                  <div
+                    className={`step-indicator ${isActive ? "active" : ""} ${
+                      isCompleted ? "completed" : ""
+                    }`}
+                  >
                     {isCompleted ? (
                       <Check className="w-5 h-5" />
                     ) : (
                       <Icon className="w-5 h-5" />
                     )}
                   </div>
-                  <span className={`ml-2 font-medium ${
-                    isActive ? 'text-rashford-red' : isCompleted ? 'text-rashford-gold' : 'text-gray-500'
-                  }`}>
+                  <span
+                    className={`ml-2 font-medium ${
+                      isActive
+                        ? "text-rashford-red"
+                        : isCompleted
+                        ? "text-rashford-gold"
+                        : "text-gray-500"
+                    }`}
+                  >
                     {step.title}
                   </span>
                   {index < steps.length - 1 && (
@@ -310,12 +387,16 @@ export default function CheckoutPage({
                   >
                     <div className="flex items-center space-x-2 mb-6">
                       <Truck className="w-6 h-6 text-rashford-red" />
-                      <h2 className="text-2xl font-bold text-gray-900">Shipping Information</h2>
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        Shipping Information
+                      </h2>
                     </div>
 
                     {/* Contact Information */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        Contact Information
+                      </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -326,15 +407,21 @@ export default function CheckoutPage({
                             <input
                               type="text"
                               value={formData.firstName}
-                              onChange={(e) => handleInputChange('firstName', e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange("firstName", e.target.value)
+                              }
                               className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent ${
-                                errors.firstName ? 'border-red-500' : 'border-gray-300'
+                                errors.firstName
+                                  ? "border-red-500"
+                                  : "border-gray-300"
                               }`}
                               placeholder="Enter first name"
                             />
                           </div>
                           {errors.firstName && (
-                            <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.firstName}
+                            </p>
                           )}
                         </div>
 
@@ -345,14 +432,20 @@ export default function CheckoutPage({
                           <input
                             type="text"
                             value={formData.lastName}
-                            onChange={(e) => handleInputChange('lastName', e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("lastName", e.target.value)
+                            }
                             className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent ${
-                              errors.lastName ? 'border-red-500' : 'border-gray-300'
+                              errors.lastName
+                                ? "border-red-500"
+                                : "border-gray-300"
                             }`}
                             placeholder="Enter last name"
                           />
                           {errors.lastName && (
-                            <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.lastName}
+                            </p>
                           )}
                         </div>
 
@@ -365,15 +458,21 @@ export default function CheckoutPage({
                             <input
                               type="email"
                               value={formData.email}
-                              onChange={(e) => handleInputChange('email', e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange("email", e.target.value)
+                              }
                               className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent ${
-                                errors.email ? 'border-red-500' : 'border-gray-300'
+                                errors.email
+                                  ? "border-red-500"
+                                  : "border-gray-300"
                               }`}
                               placeholder="Enter email address"
                             />
                           </div>
                           {errors.email && (
-                            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.email}
+                            </p>
                           )}
                         </div>
 
@@ -386,15 +485,21 @@ export default function CheckoutPage({
                             <input
                               type="tel"
                               value={formData.phone}
-                              onChange={(e) => handleInputChange('phone', e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange("phone", e.target.value)
+                              }
                               className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent ${
-                                errors.phone ? 'border-red-500' : 'border-gray-300'
+                                errors.phone
+                                  ? "border-red-500"
+                                  : "border-gray-300"
                               }`}
                               placeholder="Enter phone number"
                             />
                           </div>
                           {errors.phone && (
-                            <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.phone}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -402,7 +507,9 @@ export default function CheckoutPage({
 
                     {/* Shipping Address */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Shipping Address</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        Shipping Address
+                      </h3>
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -413,15 +520,21 @@ export default function CheckoutPage({
                             <input
                               type="text"
                               value={formData.address}
-                              onChange={(e) => handleInputChange('address', e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange("address", e.target.value)
+                              }
                               className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent ${
-                                errors.address ? 'border-red-500' : 'border-gray-300'
+                                errors.address
+                                  ? "border-red-500"
+                                  : "border-gray-300"
                               }`}
                               placeholder="Enter street address"
                             />
                           </div>
                           {errors.address && (
-                            <p className="text-red-500 text-sm mt-1">{errors.address}</p>
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.address}
+                            </p>
                           )}
                         </div>
 
@@ -433,14 +546,20 @@ export default function CheckoutPage({
                             <input
                               type="text"
                               value={formData.city}
-                              onChange={(e) => handleInputChange('city', e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange("city", e.target.value)
+                              }
                               className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent ${
-                                errors.city ? 'border-red-500' : 'border-gray-300'
+                                errors.city
+                                  ? "border-red-500"
+                                  : "border-gray-300"
                               }`}
                               placeholder="Enter city"
                             />
                             {errors.city && (
-                              <p className="text-red-500 text-sm mt-1">{errors.city}</p>
+                              <p className="text-red-500 text-sm mt-1">
+                                {errors.city}
+                              </p>
                             )}
                           </div>
 
@@ -451,14 +570,20 @@ export default function CheckoutPage({
                             <input
                               type="text"
                               value={formData.state}
-                              onChange={(e) => handleInputChange('state', e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange("state", e.target.value)
+                              }
                               className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent ${
-                                errors.state ? 'border-red-500' : 'border-gray-300'
+                                errors.state
+                                  ? "border-red-500"
+                                  : "border-gray-300"
                               }`}
                               placeholder="Enter state"
                             />
                             {errors.state && (
-                              <p className="text-red-500 text-sm mt-1">{errors.state}</p>
+                              <p className="text-red-500 text-sm mt-1">
+                                {errors.state}
+                              </p>
                             )}
                           </div>
 
@@ -469,14 +594,20 @@ export default function CheckoutPage({
                             <input
                               type="text"
                               value={formData.zipCode}
-                              onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                              onChange={(e) =>
+                                handleInputChange("zipCode", e.target.value)
+                              }
                               className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent ${
-                                errors.zipCode ? 'border-red-500' : 'border-gray-300'
+                                errors.zipCode
+                                  ? "border-red-500"
+                                  : "border-gray-300"
                               }`}
                               placeholder="Enter ZIP code"
                             />
                             {errors.zipCode && (
-                              <p className="text-red-500 text-sm mt-1">{errors.zipCode}</p>
+                              <p className="text-red-500 text-sm mt-1">
+                                {errors.zipCode}
+                              </p>
                             )}
                           </div>
                         </div>
@@ -485,7 +616,9 @@ export default function CheckoutPage({
 
                     {/* Shipping Method */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Shipping Method</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        Shipping Method
+                      </h3>
                       <div className="space-y-3">
                         {shippingMethods.map((method) => {
                           const Icon = method.icon;
@@ -494,8 +627,8 @@ export default function CheckoutPage({
                               key={method.id}
                               className={`flex items-center p-4 border rounded-lg cursor-pointer transition-all ${
                                 formData.shippingMethod === method.id
-                                  ? 'border-rashford-red bg-red-50'
-                                  : 'border-gray-300 hover:border-gray-400'
+                                  ? "border-rashford-red bg-red-50"
+                                  : "border-gray-300 hover:border-gray-400"
                               }`}
                             >
                               <input
@@ -503,18 +636,29 @@ export default function CheckoutPage({
                                 name="shippingMethod"
                                 value={method.id}
                                 checked={formData.shippingMethod === method.id}
-                                onChange={(e) => handleInputChange('shippingMethod', e.target.value)}
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    "shippingMethod",
+                                    e.target.value
+                                  )
+                                }
                                 className="sr-only"
                               />
                               <Icon className="w-5 h-5 text-rashford-red mr-3" />
                               <div className="flex-1">
                                 <div className="flex items-center justify-between">
-                                  <h4 className="font-medium text-gray-900">{method.name}</h4>
+                                  <h4 className="font-medium text-gray-900">
+                                    {method.name}
+                                  </h4>
                                   <span className="font-semibold text-gray-900">
-                                    {method.price === 0 ? 'Free' : `$${method.price}`}
+                                    {method.price === 0
+                                      ? "Free"
+                                      : `$${method.price}`}
                                   </span>
                                 </div>
-                                <p className="text-sm text-gray-600">{method.description}</p>
+                                <p className="text-sm text-gray-600">
+                                  {method.description}
+                                </p>
                               </div>
                             </label>
                           );
@@ -528,16 +672,20 @@ export default function CheckoutPage({
                         <input
                           type="checkbox"
                           checked={formData.isGift}
-                          onChange={(e) => handleInputChange('isGift', e.target.checked)}
+                          onChange={(e) =>
+                            handleInputChange("isGift", e.target.checked)
+                          }
                           className="rounded border-gray-300 text-rashford-red focus:ring-rashford-red"
                         />
-                        <span className="text-sm font-medium text-gray-700">This is a gift</span>
+                        <span className="text-sm font-medium text-gray-700">
+                          This is a gift
+                        </span>
                       </label>
 
                       {formData.isGift && (
                         <motion.div
                           initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
+                          animate={{ opacity: 1, height: "auto" }}
                           className="mt-4"
                         >
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -545,7 +693,9 @@ export default function CheckoutPage({
                           </label>
                           <textarea
                             value={formData.giftMessage}
-                            onChange={(e) => handleInputChange('giftMessage', e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("giftMessage", e.target.value)
+                            }
                             rows={3}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent"
                             placeholder="Enter your gift message..."
@@ -567,7 +717,9 @@ export default function CheckoutPage({
                   >
                     <div className="flex items-center space-x-2 mb-6">
                       <CreditCard className="w-6 h-6 text-rashford-red" />
-                      <h2 className="text-2xl font-bold text-gray-900">Payment Information</h2>
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        Payment Information
+                      </h2>
                     </div>
 
                     {/* Security Notice */}
@@ -589,16 +741,25 @@ export default function CheckoutPage({
                           <input
                             type="text"
                             value={formData.cardNumber}
-                            onChange={(e) => handleInputChange('cardNumber', formatCardNumber(e.target.value))}
+                            onChange={(e) =>
+                              handleInputChange(
+                                "cardNumber",
+                                formatCardNumber(e.target.value)
+                              )
+                            }
                             className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent ${
-                              errors.cardNumber ? 'border-red-500' : 'border-gray-300'
+                              errors.cardNumber
+                                ? "border-red-500"
+                                : "border-gray-300"
                             }`}
                             placeholder="1234 5678 9012 3456"
                             maxLength={19}
                           />
                         </div>
                         {errors.cardNumber && (
-                          <p className="text-red-500 text-sm mt-1">{errors.cardNumber}</p>
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.cardNumber}
+                          </p>
                         )}
                       </div>
 
@@ -612,16 +773,25 @@ export default function CheckoutPage({
                             <input
                               type="text"
                               value={formData.expiryDate}
-                              onChange={(e) => handleInputChange('expiryDate', formatExpiryDate(e.target.value))}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  "expiryDate",
+                                  formatExpiryDate(e.target.value)
+                                )
+                              }
                               className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent ${
-                                errors.expiryDate ? 'border-red-500' : 'border-gray-300'
+                                errors.expiryDate
+                                  ? "border-red-500"
+                                  : "border-gray-300"
                               }`}
                               placeholder="MM/YY"
                               maxLength={5}
                             />
                           </div>
                           {errors.expiryDate && (
-                            <p className="text-red-500 text-sm mt-1">{errors.expiryDate}</p>
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.expiryDate}
+                            </p>
                           )}
                         </div>
 
@@ -634,16 +804,25 @@ export default function CheckoutPage({
                             <input
                               type="text"
                               value={formData.cvv}
-                              onChange={(e) => handleInputChange('cvv', e.target.value.replace(/\D/g, ''))}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  "cvv",
+                                  e.target.value.replace(/\D/g, "")
+                                )
+                              }
                               className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent ${
-                                errors.cvv ? 'border-red-500' : 'border-gray-300'
+                                errors.cvv
+                                  ? "border-red-500"
+                                  : "border-gray-300"
                               }`}
                               placeholder="123"
                               maxLength={4}
                             />
                           </div>
                           {errors.cvv && (
-                            <p className="text-red-500 text-sm mt-1">{errors.cvv}</p>
+                            <p className="text-red-500 text-sm mt-1">
+                              {errors.cvv}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -657,15 +836,21 @@ export default function CheckoutPage({
                           <input
                             type="text"
                             value={formData.cardName}
-                            onChange={(e) => handleInputChange('cardName', e.target.value)}
+                            onChange={(e) =>
+                              handleInputChange("cardName", e.target.value)
+                            }
                             className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent ${
-                              errors.cardName ? 'border-red-500' : 'border-gray-300'
+                              errors.cardName
+                                ? "border-red-500"
+                                : "border-gray-300"
                             }`}
                             placeholder="Enter cardholder name"
                           />
                         </div>
                         {errors.cardName && (
-                          <p className="text-red-500 text-sm mt-1">{errors.cardName}</p>
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.cardName}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -676,7 +861,12 @@ export default function CheckoutPage({
                         <input
                           type="checkbox"
                           checked={formData.billingDifferent}
-                          onChange={(e) => handleInputChange('billingDifferent', e.target.checked)}
+                          onChange={(e) =>
+                            handleInputChange(
+                              "billingDifferent",
+                              e.target.checked
+                            )
+                          }
                           className="rounded border-gray-300 text-rashford-red focus:ring-rashford-red"
                         />
                         <span className="text-sm font-medium text-gray-700">
@@ -687,10 +877,12 @@ export default function CheckoutPage({
                       {formData.billingDifferent && (
                         <motion.div
                           initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
+                          animate={{ opacity: 1, height: "auto" }}
                           className="space-y-4"
                         >
-                          <h3 className="text-lg font-semibold text-gray-900">Billing Address</h3>
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            Billing Address
+                          </h3>
                           {/* Billing form fields would go here - similar to shipping */}
                         </motion.div>
                       )}
@@ -709,23 +901,34 @@ export default function CheckoutPage({
                   >
                     <div className="flex items-center space-x-2 mb-6">
                       <Check className="w-6 h-6 text-rashford-red" />
-                      <h2 className="text-2xl font-bold text-gray-900">Review Your Order</h2>
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        Review Your Order
+                      </h2>
                     </div>
 
                     {/* Order Items */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Items</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        Order Items
+                      </h3>
                       <div className="space-y-4">
                         {cartItems.map((item) => (
-                          <div key={item.id} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                            <img
+                          <div
+                            key={item.id}
+                            className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg"
+                          >
+                            <Image
                               src={item.image}
                               alt={item.name}
                               className="w-16 h-16 object-cover rounded-lg"
                             />
                             <div className="flex-1">
-                              <h4 className="font-medium text-gray-900">{item.name}</h4>
-                              <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                              <h4 className="font-medium text-gray-900">
+                                {item.name}
+                              </h4>
+                              <p className="text-sm text-gray-600">
+                                Quantity: {item.quantity}
+                              </p>
                             </div>
                             <div className="text-right">
                               <p className="font-semibold text-gray-900">
@@ -739,7 +942,9 @@ export default function CheckoutPage({
 
                     {/* Shipping Information */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Shipping Information</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        Shipping Information
+                      </h3>
                       <div className="p-4 bg-gray-50 rounded-lg">
                         <p className="font-medium text-gray-900">
                           {formData.firstName} {formData.lastName}
@@ -755,7 +960,9 @@ export default function CheckoutPage({
 
                     {/* Payment Information */}
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment Information</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        Payment Information
+                      </h3>
                       <div className="p-4 bg-gray-50 rounded-lg">
                         <p className="font-medium text-gray-900">
                           Credit Card ending in {formData.cardNumber.slice(-4)}
@@ -773,12 +980,18 @@ export default function CheckoutPage({
                           required
                         />
                         <span className="text-sm text-gray-700">
-                          I agree to the{' '}
-                          <a href="#" className="text-rashford-red hover:underline">
+                          I agree to the{" "}
+                          <a
+                            href="#"
+                            className="text-rashford-red hover:underline"
+                          >
                             Terms and Conditions
-                          </a>{' '}
-                          and{' '}
-                          <a href="#" className="text-rashford-red hover:underline">
+                          </a>{" "}
+                          and{" "}
+                          <a
+                            href="#"
+                            className="text-rashford-red hover:underline"
+                          >
                             Privacy Policy
                           </a>
                         </span>
@@ -791,11 +1004,15 @@ export default function CheckoutPage({
               {/* Navigation Buttons */}
               <div className="flex items-center justify-between mt-8 pt-6 border-t">
                 <button
-                  onClick={currentStep === 1 ? () => onNavigate('cart') : handlePrevious}
+                  onClick={
+                    currentStep === 1
+                      ? () => onNavigate("cart")
+                      : handlePrevious
+                  }
                   className="flex items-center space-x-2 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  <span>{currentStep === 1 ? 'Back to Cart' : 'Previous'}</span>
+                  <span>{currentStep === 1 ? "Back to Cart" : "Previous"}</span>
                 </button>
 
                 {currentStep < 3 ? (
@@ -832,13 +1049,15 @@ export default function CheckoutPage({
           {/* Order Summary Sidebar */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-lg p-6 sticky top-24">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Order Summary</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                Order Summary
+              </h2>
 
               {/* Items */}
               <div className="space-y-3 mb-6">
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex items-center space-x-3">
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.name}
                       className="w-12 h-12 object-cover rounded-lg"
@@ -847,7 +1066,9 @@ export default function CheckoutPage({
                       <p className="text-sm font-medium text-gray-900 truncate">
                         {item.name}
                       </p>
-                      <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                      <p className="text-sm text-gray-500">
+                        Qty: {item.quantity}
+                      </p>
                     </div>
                     <p className="text-sm font-medium text-gray-900">
                       ${(item.price * item.quantity).toFixed(2)}
@@ -864,7 +1085,9 @@ export default function CheckoutPage({
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Shipping</span>
-                  <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                  <span>
+                    {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+                  </span>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Tax</span>

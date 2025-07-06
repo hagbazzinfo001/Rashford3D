@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import { useState } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import {
   Trash2,
   Plus,
   Minus,
@@ -18,9 +19,9 @@ import {
   Lock,
   Star,
   Eye,
-} from 'lucide-react';
-import { useCart } from '@/contexts/CartContext';
-import { useWishlist } from '@/contexts/WishlistContext';
+} from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 
 interface CartPageProps {
   onNavigate: (page: string, data?: any) => void;
@@ -28,24 +29,29 @@ interface CartPageProps {
   cartTotal: number;
   products: any[];
 }
+type Promo = {
+  code: string;
+  discount: number;
+  type: string;
+};
 
-export default function CartPage({ 
-  onNavigate, 
-  cartItems, 
-  cartTotal, 
-  products 
+export default function CartPage({
+  onNavigate,
+  cartItems,
+  cartTotal,
+  products,
 }: CartPageProps) {
-  const [promoCode, setPromoCode] = useState('');
-  const [appliedPromo, setAppliedPromo] = useState(null);
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<Promo | null>(null);
   const [showPromoInput, setShowPromoInput] = useState(false);
 
-  const { 
-    updateQuantity, 
-    removeFromCart, 
-    getCartSubtotal, 
-    getCartTax, 
+  const {
+    updateQuantity,
+    removeFromCart,
+    getCartSubtotal,
+    getCartTax,
     getCartShipping,
-    addToCart 
+    addToCart,
   } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
@@ -57,17 +63,17 @@ export default function CartPage({
 
   const handlePromoCode = () => {
     // Mock promo code validation
-    const validCodes = ['SAVE10', 'WELCOME', 'FIRST20'];
+    const validCodes = ["SAVE10", "WELCOME", "FIRST20"];
     if (validCodes.includes(promoCode.toUpperCase())) {
       setAppliedPromo({
         code: promoCode.toUpperCase(),
         discount: subtotal * 0.1,
-        type: 'percentage',
+        type: "percentage",
       });
       setShowPromoInput(false);
-      setPromoCode('');
+      setPromoCode("");
     } else {
-      alert('Invalid promo code');
+      alert("Invalid promo code");
     }
   };
 
@@ -77,8 +83,10 @@ export default function CartPage({
 
   // Get recommended products (excluding items already in cart)
   const recommendedProducts = products
-    .filter(product => !cartItems.some(item => item.productId === product.id))
-    .filter(product => product.isFeatured || product.rating >= 4.5)
+    .filter(
+      (product) => !cartItems.some((item) => item.productId === product.id)
+    )
+    .filter((product) => product.isFeatured || product.rating >= 4.5)
     .slice(0, 4);
 
   if (cartItems.length === 0) {
@@ -92,14 +100,16 @@ export default function CartPage({
               className="mb-8"
             >
               <ShoppingBag className="w-24 h-24 text-gray-300 mx-auto mb-6" />
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">Your Cart is Empty</h1>
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                Your Cart is Empty
+              </h1>
               <p className="text-xl text-gray-600 mb-8">
-                Looks like you haven't added anything to your cart yet.
+                Looks like you haven&#39;t added anything to your cart yet.
               </p>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => onNavigate('shop')}
+                onClick={() => onNavigate("shop")}
                 className="btn-primary text-lg px-8 py-4 flex items-center justify-center gap-2 mx-auto"
               >
                 Start Shopping
@@ -110,7 +120,9 @@ export default function CartPage({
             {/* Recommended Products */}
             {recommendedProducts.length > 0 && (
               <div className="mt-16">
-                <h2 className="text-2xl font-bold text-gray-900 mb-8">You Might Like</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-8">
+                  You Might Like
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {recommendedProducts.map((product, index) => (
                     <motion.div
@@ -121,7 +133,7 @@ export default function CartPage({
                       className="bg-white rounded-lg shadow-lg overflow-hidden card-hover group relative"
                     >
                       <div className="relative overflow-hidden">
-                        <img
+                        <Image
                           src={product.images[0]}
                           alt={product.name}
                           className="w-full h-48 object-cover product-image"
@@ -130,7 +142,9 @@ export default function CartPage({
                           <motion.button
                             initial={{ opacity: 0, scale: 0.8 }}
                             whileHover={{ opacity: 1, scale: 1 }}
-                            onClick={() => onNavigate('product-details', product)}
+                            onClick={() =>
+                              onNavigate("product-details", product)
+                            }
                             className="bg-white text-gray-900 px-3 py-2 rounded-lg font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center gap-2"
                           >
                             <Eye className="w-4 h-4" />
@@ -172,11 +186,17 @@ export default function CartPage({
       <div className="container mx-auto px-4 py-8">
         {/* Breadcrumbs */}
         <div className="breadcrumbs mb-8">
-          <button onClick={() => onNavigate('home')} className="breadcrumb-item">
+          <button
+            onClick={() => onNavigate("home")}
+            className="breadcrumb-item"
+          >
             Home
           </button>
           <span className="breadcrumb-separator">/</span>
-          <button onClick={() => onNavigate('shop')} className="breadcrumb-item">
+          <button
+            onClick={() => onNavigate("shop")}
+            className="breadcrumb-item"
+          >
             Shop
           </button>
           <span className="breadcrumb-separator">/</span>
@@ -187,7 +207,8 @@ export default function CartPage({
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-bold text-gray-900">Shopping Cart</h1>
           <p className="text-gray-600">
-            {cartItems.length} item{cartItems.length !== 1 ? 's' : ''} in your cart
+            {cartItems.length} item{cartItems.length !== 1 ? "s" : ""} in your
+            cart
           </p>
         </div>
 
@@ -207,7 +228,7 @@ export default function CartPage({
                   <div className="flex items-center space-x-4">
                     {/* Product Image */}
                     <div className="flex-shrink-0">
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.name}
                         className="w-24 h-24 object-cover rounded-lg"
@@ -235,7 +256,9 @@ export default function CartPage({
                     {/* Quantity Controls */}
                     <div className="flex items-center space-x-3">
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity - 1)
+                        }
                         className="quantity-btn"
                         disabled={item.quantity <= 1}
                       >
@@ -245,7 +268,9 @@ export default function CartPage({
                         {item.quantity}
                       </span>
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        onClick={() =>
+                          updateQuantity(item.id, item.quantity + 1)
+                        }
                         className="quantity-btn"
                       >
                         <Plus className="w-4 h-4" />
@@ -264,18 +289,24 @@ export default function CartPage({
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        onClick={() => toggleWishlist({ 
-                          id: item.productId, 
-                          name: item.name, 
-                          price: item.price, 
-                          image: item.image 
-                        })}
+                        onClick={() =>
+                          toggleWishlist({
+                            id: item.productId,
+                            name: item.name,
+                            price: item.price,
+                            image: item.image,
+                          })
+                        }
                         className="p-2 text-gray-400 hover:text-red-500 transition-colors"
                         title="Move to Wishlist"
                       >
-                        <Heart className={`w-5 h-5 ${
-                          isInWishlist(item.productId) ? 'fill-red-500 text-red-500' : ''
-                        }`} />
+                        <Heart
+                          className={`w-5 h-5 ${
+                            isInWishlist(item.productId)
+                              ? "fill-red-500 text-red-500"
+                              : ""
+                          }`}
+                        />
                       </motion.button>
                       <motion.button
                         whileHover={{ scale: 1.1 }}
@@ -296,7 +327,7 @@ export default function CartPage({
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => onNavigate('shop')}
+              onClick={() => onNavigate("shop")}
               className="w-full mt-6 py-3 border-2 border-dashed border-gray-300 text-gray-600 rounded-lg hover:border-rashford-red hover:text-rashford-red transition-colors flex items-center justify-center gap-2"
             >
               <Package className="w-5 h-5" />
@@ -307,7 +338,9 @@ export default function CartPage({
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-lg p-6 sticky top-24">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Order Summary</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                Order Summary
+              </h2>
 
               {/* Promo Code */}
               <div className="mb-6">
@@ -324,7 +357,7 @@ export default function CartPage({
                 {showPromoInput && !appliedPromo && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
+                    animate={{ opacity: 1, height: "auto" }}
                     className="space-y-3"
                   >
                     <div className="flex space-x-2">
@@ -379,24 +412,26 @@ export default function CartPage({
                   <span>Subtotal</span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
-                
+
                 {appliedPromo && (
                   <div className="flex justify-between text-green-600">
                     <span>Discount ({appliedPromo.code})</span>
                     <span>-${discount.toFixed(2)}</span>
                   </div>
                 )}
-                
+
                 <div className="flex justify-between text-gray-600">
                   <span>Shipping</span>
-                  <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                  <span>
+                    {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+                  </span>
                 </div>
-                
+
                 <div className="flex justify-between text-gray-600">
                   <span>Tax</span>
                   <span>${tax.toFixed(2)}</span>
                 </div>
-                
+
                 <div className="border-t pt-3">
                   <div className="flex justify-between text-xl font-bold text-gray-900">
                     <span>Total</span>
@@ -410,14 +445,15 @@ export default function CartPage({
                 <div className="flex items-center space-x-2 mb-2">
                   <Truck className="w-4 h-4 text-blue-600" />
                   <span className="text-sm font-medium text-blue-800">
-                    {shipping === 0 ? 'Free Shipping!' : 'Shipping Available'}
+                    {shipping === 0 ? "Free Shipping!" : "Shipping Available"}
                   </span>
                 </div>
                 <p className="text-xs text-blue-600">
-                  {shipping === 0 
-                    ? 'Your order qualifies for free shipping!'
-                    : `Add $${(100 - subtotal).toFixed(2)} more for free shipping`
-                  }
+                  {shipping === 0
+                    ? "Your order qualifies for free shipping!"
+                    : `Add $${(100 - subtotal).toFixed(
+                        2
+                      )} more for free shipping`}
                 </p>
               </div>
 
@@ -441,7 +477,7 @@ export default function CartPage({
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => onNavigate('checkout')}
+                onClick={() => onNavigate("checkout")}
                 className="w-full btn-primary text-lg py-4 flex items-center justify-center gap-2"
               >
                 Proceed to Checkout
@@ -452,14 +488,16 @@ export default function CartPage({
               <div className="mt-4 text-center">
                 <p className="text-xs text-gray-500 mb-2">We accept</p>
                 <div className="flex justify-center space-x-2">
-                  {['Visa', 'Mastercard', 'PayPal', 'Apple Pay'].map((method) => (
-                    <div
-                      key={method}
-                      className="px-2 py-1 bg-gray-100 rounded text-xs font-medium text-gray-600"
-                    >
-                      {method}
-                    </div>
-                  ))}
+                  {["Visa", "Mastercard", "PayPal", "Apple Pay"].map(
+                    (method) => (
+                      <div
+                        key={method}
+                        className="px-2 py-1 bg-gray-100 rounded text-xs font-medium text-gray-600"
+                      >
+                        {method}
+                      </div>
+                    )
+                  )}
                 </div>
               </div>
             </div>
@@ -469,7 +507,9 @@ export default function CartPage({
         {/* Recommended Products */}
         {recommendedProducts.length > 0 && (
           <div className="mt-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">You Might Also Like</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">
+              You Might Also Like
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {recommendedProducts.map((product, index) => (
                 <motion.div
@@ -501,14 +541,16 @@ export default function CartPage({
                   >
                     <Heart
                       className={`w-5 h-5 ${
-                        isInWishlist(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'
+                        isInWishlist(product.id)
+                          ? "fill-red-500 text-red-500"
+                          : "text-gray-400"
                       }`}
                     />
                   </button>
 
                   {/* Product Image */}
                   <div className="relative overflow-hidden">
-                    <img
+                    <Image
                       src={product.images[0]}
                       alt={product.name}
                       className="w-full h-48 object-cover product-image"
@@ -517,7 +559,7 @@ export default function CartPage({
                       <motion.button
                         initial={{ opacity: 0, scale: 0.8 }}
                         whileHover={{ opacity: 1, scale: 1 }}
-                        onClick={() => onNavigate('product-details', product)}
+                        onClick={() => onNavigate("product-details", product)}
                         className="bg-white text-gray-900 px-3 py-2 rounded-lg font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center gap-2"
                       >
                         <Eye className="w-4 h-4" />
@@ -539,7 +581,7 @@ export default function CartPage({
                         </span>
                       </div>
                     </div>
-                    
+
                     <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2">
                       {product.name}
                     </h3>
@@ -555,7 +597,7 @@ export default function CartPage({
                           </span>
                         )}
                       </div>
-                      
+
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}

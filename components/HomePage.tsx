@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
+
+import Image from "next/image";
 import {
   ArrowRight,
   Star,
@@ -32,7 +35,10 @@ import {
 } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
-
+interface AnimatedCounterProps {
+  value: number;
+  suffix?: string;
+}
 interface HomePageProps {
   onNavigate: (page: string, data?: any) => void;
   searchQuery: string;
@@ -42,6 +48,22 @@ interface HomePageProps {
   products: any[];
   categories: any[];
   isLoading: boolean;
+}
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  brand: string;
+  price: number;
+  originalPrice?: number;
+  images: string[];
+  rating: number;
+  reviewCount: number;
+  isFeatured?: boolean;
+  isNew?: boolean;
+  isOnSale?: boolean;
+  discountPercentage?: number;
+  // add any other fields you use
 }
 
 export default function HomePage({
@@ -55,7 +77,7 @@ export default function HomePage({
   isLoading,
 }: HomePageProps) {
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
-  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [testimonialSlide, setTestimonialSlide] = useState(0);
   const [statsAnimated, setStatsAnimated] = useState(false);
 
@@ -209,23 +231,24 @@ export default function HomePage({
     },
   ];
 
-  const getCategoryIcon = (categoryId: string) => {
-    const icons = {
-      electronics: Zap,
-      "smart-home": Home,
-      accessories: Headphones,
-      lighting: Lightbulb,
-      security: Shield,
-      audio: Speaker,
-      house: Home,
-      kitchen: Coffee,
-      climate: Wind,
-      "air-quality": Wind,
-    };
+  const icons: Record<string, LucideIcon> = {
+    electronics: Zap,
+    "smart-home": Home,
+    accessories: Headphones,
+    lighting: Lightbulb,
+    security: Shield,
+    audio: Speaker,
+    house: Home,
+    kitchen: Coffee,
+    climate: Wind,
+    "air-quality": Wind,
+  };
+
+  const getCategoryIcon = (categoryId: string): LucideIcon => {
     return icons[categoryId] || Grid3X3;
   };
 
-  const AnimatedCounter = ({ value, suffix = "" }) => {
+  const AnimatedCounter = ({ value, suffix = "" }: AnimatedCounterProps) => {
     const [count, setCount] = useState(0);
 
     useEffect(() => {
@@ -391,7 +414,7 @@ export default function HomePage({
               Why Choose Rashford3D?
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              We're committed to providing the best shopping experience with
+              We&#39;re committed to providing the best shopping experience with
               premium products and exceptional service.
             </p>
           </motion.div>
@@ -457,7 +480,7 @@ export default function HomePage({
                   className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <div className="aspect-w-16 aspect-h-9">
-                    <img
+                    <Image
                       src={category.image}
                       alt={category.name}
                       className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
@@ -543,7 +566,7 @@ export default function HomePage({
 
                 {/* Product Image */}
                 <div className="relative overflow-hidden">
-                  <img
+                  <Image
                     src={product.images[0]}
                     alt={product.name}
                     className="w-full h-64 object-cover product-image"
@@ -700,7 +723,7 @@ export default function HomePage({
                 className="testimonial-card"
               >
                 <div className="flex items-center mb-6">
-                  <img
+                  <Image
                     src={testimonials[testimonialSlide].avatar}
                     alt={testimonials[testimonialSlide].name}
                     className="w-16 h-16 rounded-full mr-4"

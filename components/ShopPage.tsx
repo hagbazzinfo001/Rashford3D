@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import {
   Filter,
   Grid,
@@ -54,7 +55,7 @@ export default function ShopPage({
 }: ShopPageProps) {
   const [viewMode, setViewMode] = useState("grid");
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedRating, setSelectedRating] = useState(0);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [onSaleOnly, setOnSaleOnly] = useState(false);
@@ -81,7 +82,9 @@ export default function ShopPage({
         (product) =>
           product.name.toLowerCase().includes(query) ||
           product.description.toLowerCase().includes(query) ||
-          product.tags.some((tag) => tag.toLowerCase().includes(query)) ||
+          product.tags.some((tag: string) =>
+            tag.toLowerCase().includes(query)
+          ) ||
           product.brand.toLowerCase().includes(query)
       );
     }
@@ -94,9 +97,8 @@ export default function ShopPage({
     }
 
     // Price range filter
-    filtered = filtered.filter(
-      (product) =>
-        product.price >= priceRange[0] && product.price <= priceRange[1]
+    filtered = filtered.filter((product) =>
+      Number(product.price >= priceRange[0] && product.price <= priceRange[1])
     );
 
     // Brand filter
@@ -133,7 +135,10 @@ export default function ShopPage({
         filtered.sort((a, b) => b.rating - a.rating);
         break;
       case "newest":
-        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+filtered.sort(
+  (a, b) =>
+    new Date(b.createdAt ?? '').getTime() - new Date(a.createdAt ?? '').getTime()
+);
         break;
       case "name":
         filtered.sort((a, b) => a.name.localeCompare(b.name));
@@ -169,7 +174,7 @@ export default function ShopPage({
     setCurrentPage(1);
   }, [filteredProducts.length]);
 
-  const handleBrandToggle = (brand) => {
+  const handleBrandToggle = (brand: string) => {
     setSelectedBrands((prev) =>
       prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
     );
@@ -558,7 +563,7 @@ export default function ShopPage({
                           viewMode === "list" ? "w-48 h-48" : "h-64"
                         }`}
                       >
-                        <img
+                        <Image
                           src={product.images[0]}
                           alt={product.name}
                           className="w-full h-full object-cover product-image"

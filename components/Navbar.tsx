@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { LucideIcon } from "lucide-react";
+
 import {
   Search,
   ShoppingCart,
@@ -30,6 +32,14 @@ import {
   Wind,
 } from "lucide-react";
 import Image from "next/image";
+type Product = {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  images: string[];
+  // add more fields as needed
+};
 
 interface NavbarProps {
   currentPage: string;
@@ -43,7 +53,7 @@ interface NavbarProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   categories: any[];
-  products: any[];
+  products: Product[];
 }
 
 export default function Navbar({
@@ -63,7 +73,7 @@ export default function Navbar({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [scrolled, setScrolled] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -93,20 +103,19 @@ export default function Navbar({
       setSearchResults([]);
     }
   }, [searchQuery, products]);
-
-  const getCategoryIcon = (categoryId: string) => {
-    const icons = {
-      electronics: Zap,
-      "smart-home": Home,
-      accessories: Headphones,
-      lighting: Lightbulb,
-      security: Shield,
-      audio: Speaker,
-      house: Home,
-      kitchen: Coffee,
-      climate: Wind,
-      "air-quality": Wind,
-    };
+  const icons: Record<string, LucideIcon> = {
+    electronics: Zap,
+    "smart-home": Home,
+    accessories: Headphones,
+    lighting: Lightbulb,
+    security: Shield,
+    audio: Speaker,
+    house: Home,
+    kitchen: Coffee,
+    climate: Wind,
+    "air-quality": Wind,
+  };
+  const getCategoryIcon = (categoryId: string): LucideIcon => {
     return icons[categoryId] || Grid3X3;
   };
 
@@ -287,7 +296,7 @@ export default function Navbar({
                           onClick={() => handleProductClick(product)}
                           className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer"
                         >
-                          <img
+                          <Image
                             src={product.images[0]}
                             alt={product.name}
                             className="w-12 h-12 object-cover rounded-lg"
@@ -332,7 +341,6 @@ export default function Navbar({
                   <span className="notification-badge">{wishlistCount}</span>
                 )}
               </motion.button>
-
               {/* Cart */}
               <motion.button
                 whileHover={{ scale: 1.1 }}
@@ -356,7 +364,7 @@ export default function Navbar({
                     className="flex items-center space-x-2 p-2 text-gray-700 hover:text-rashford-red transition-colors"
                   >
                     {user?.avatar ? (
-                      <img
+                      <Image
                         src={user.avatar}
                         alt={user.name}
                         className="w-6 h-6 rounded-full"
@@ -547,7 +555,7 @@ export default function Navbar({
                         onClick={() => handleProductClick(product)}
                         className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer"
                       >
-                        <img
+                        <Image
                           src={product.images[0]}
                           alt={product.name}
                           className="w-12 h-12 object-cover rounded-lg"
