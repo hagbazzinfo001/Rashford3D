@@ -1,0 +1,36 @@
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: "/api-proxy/:path*",
+        destination: "http://rashroff3decommerce.somee.com/api/:path*", // Proxy to backend
+      },
+    ];
+  },
+
+  output: "export",
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  images: {
+    unoptimized: true,
+    domains: [
+      "res.cloudinary.com",
+      "images.pexels.com",
+      "firebasestorage.googleapis.com",
+    ],
+  },
+  experimental: {
+    turbo: {
+      rules: {
+        "*.svg": {
+          loaders: ["@svgr/webpack"],
+          as: "*.js",
+        },
+      },
+    },
+  },
+};
+
+module.exports = nextConfig;

@@ -1,0 +1,679 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --rashford-red: #811c18;
+  --rashford-dark: #202020;
+  --rashford-gold: #f4c02c;
+  --rashford-gray: #9c969b;
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222.2 84% 4.9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem;
+  --chart-1: 12 76% 61%;
+  --chart-2: 173 58% 39%;
+  --chart-3: 197 37% 24%;
+  --chart-4: 43 74% 66%;
+  --chart-5: 27 87% 67%;
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+}
+
+/* Custom Rashford3D Styles */
+.rashford-red {
+  color: var(--rashford-red);
+}
+
+.rashford-dark {
+  color: var(--rashford-dark);
+}
+
+.rashford-gold {
+  color: var(--rashford-gold);
+}
+
+.rashford-gray {
+  color: var(--rashford-gray);
+}
+
+.bg-rashford-red {
+  background-color: var(--rashford-red);
+}
+
+.bg-rashford-dark {
+  background-color: var(--rashford-dark);
+}
+
+.bg-rashford-gold {
+  background-color: var(--rashford-gold);
+}
+
+.bg-rashford-gray {
+  background-color: var(--rashford-gray);
+}
+
+.text-rashford-red {
+  color: var(--rashford-red);
+}
+
+.text-rashford-dark {
+  color: var(--rashford-dark);
+}
+
+.text-rashford-gold {
+  color: var(--rashford-gold);
+}
+
+.text-rashford-gray {
+  color: var(--rashford-gray);
+}
+
+.border-rashford-red {
+  border-color: var(--rashford-red);
+}
+
+.border-rashford-gold {
+  border-color: var(--rashford-gold);
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(
+    135deg,
+    var(--rashford-red),
+    var(--rashford-gold)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gradient Backgrounds */
+.footer-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--rashford-dark) 0%,
+    var(--rashford-red) 100%
+  );
+}
+
+.newsletter-signup {
+  background: linear-gradient(
+    135deg,
+    var(--rashford-red) 0%,
+    var(--rashford-gold) 100%
+  );
+  color: white;
+  padding: 80px 0;
+}
+
+.admin-gradient {
+  background: linear-gradient(135deg, var(--rashford-dark) 0%, #2d2d2d 100%);
+}
+
+/* Button Styles */
+.btn-primary {
+  @apply bg-rashford-red text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-all duration-200 shadow-lg hover:shadow-xl;
+}
+
+.btn-secondary {
+  @apply bg-white text-rashford-red border-2 border-rashford-red px-6 py-3 rounded-lg font-semibold hover:bg-rashford-red hover:text-white transition-all duration-200;
+}
+
+.btn-admin {
+  @apply bg-rashford-gold text-rashford-dark px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-all duration-200;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition-all duration-200;
+}
+
+/* Card Styles */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+}
+
+.admin-card {
+  @apply bg-white rounded-lg shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-all duration-300;
+}
+
+/* Product Grid */
+.product-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+}
+
+.admin-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+/* Product Badges */
+.product-badge {
+  @apply px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wide;
+}
+
+.product-badge.new {
+  @apply bg-green-500 text-white;
+}
+
+.product-badge.sale {
+  @apply bg-red-500 text-white;
+}
+
+.product-badge.featured {
+  @apply bg-rashford-gold text-rashford-dark;
+}
+
+/* Wishlist Button */
+.wishlist-button {
+  @apply absolute top-3 right-3 p-2 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 z-10;
+}
+
+/* Product Image */
+.product-image {
+  @apply transition-transform duration-300 group-hover:scale-105;
+}
+
+/* Navigation */
+.breadcrumbs {
+  @apply flex items-center space-x-2 text-sm text-gray-600;
+}
+
+.breadcrumb-item {
+  @apply hover:text-rashford-red transition-colors;
+}
+
+.breadcrumb-separator {
+  @apply text-gray-400;
+}
+
+/* Promo Banner */
+.promo-banner {
+  @apply bg-rashford-gold text-rashford-dark py-2 text-center font-medium;
+}
+
+/* Notification Badge */
+.notification-badge {
+  @apply absolute -top-2 -right-2 bg-rashford-red text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold;
+}
+
+/* Social Icons */
+.social-icon {
+  @apply w-10 h-10 rounded-full flex items-center justify-center text-white hover:scale-110 transition-all duration-200;
+}
+
+/* Feature Icons */
+.feature-icon {
+  @apply w-16 h-16 bg-rashford-red text-white rounded-full flex items-center justify-center mx-auto;
+}
+
+/* Trust Indicators */
+.trust-indicators {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center;
+}
+
+.trust-indicator {
+  @apply flex flex-col items-center;
+}
+
+.trust-indicator-icon {
+  @apply w-12 h-12 text-rashford-red mb-4;
+}
+
+/* Stock Indicators */
+.stock-indicator {
+  @apply flex items-center text-sm font-medium;
+}
+
+.stock-indicator.in-stock {
+  @apply text-green-600;
+}
+
+.stock-indicator.low-stock {
+  @apply text-yellow-600;
+}
+
+.stock-indicator.out-of-stock {
+  @apply text-red-600;
+}
+
+.stock-dot {
+  @apply w-2 h-2 rounded-full mr-2;
+}
+
+.stock-indicator.in-stock .stock-dot {
+  @apply bg-green-600;
+}
+
+.stock-indicator.low-stock .stock-dot {
+  @apply bg-yellow-600;
+}
+
+.stock-indicator.out-of-stock .stock-dot {
+  @apply bg-red-600;
+}
+
+/* Quantity Controls */
+.quantity-btn {
+  @apply w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.quantity-input {
+  @apply w-16 text-center border border-gray-300 rounded-lg py-1;
+}
+
+/* Cart Item */
+.cart-item {
+  @apply hover:shadow-lg transition-all duration-200;
+}
+
+/* Testimonial Card */
+.testimonial-card {
+  @apply bg-white rounded-lg shadow-lg p-8 mx-auto max-w-3xl;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  @apply w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin;
+}
+
+/* Text Shadow */
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Back to Top */
+.back-to-top {
+  @apply fixed bottom-8 right-8 w-12 h-12 bg-rashford-red text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 z-50;
+}
+
+/* View Toggle */
+.view-toggle {
+  @apply flex border border-gray-300 rounded-lg overflow-hidden;
+}
+
+.view-toggle-button {
+  @apply px-3 py-2 border-r border-gray-300 last:border-r-0 hover:bg-gray-50 transition-colors;
+}
+
+.view-toggle-button.active {
+  @apply bg-rashford-red text-white;
+}
+
+/* Search Filters */
+.search-filters {
+  @apply bg-white rounded-lg shadow-lg p-6 sticky top-24;
+}
+
+.filter-section {
+  @apply mb-6 pb-6 border-b border-gray-200 last:border-b-0;
+}
+
+.filter-section h4 {
+  @apply font-semibold text-gray-900 mb-3;
+}
+
+.filter-option {
+  @apply flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded;
+}
+
+.filter-option input {
+  @apply rounded border-gray-300 text-rashford-red focus:ring-rashford-red;
+}
+
+/* Price Slider */
+.price-slider {
+  @apply appearance-none bg-gray-200 rounded-lg h-2 outline-none;
+}
+
+.price-slider::-webkit-slider-thumb {
+  @apply appearance-none w-4 h-4 bg-rashford-red rounded-full cursor-pointer;
+}
+
+.price-slider::-moz-range-thumb {
+  @apply w-4 h-4 bg-rashford-red rounded-full cursor-pointer border-none;
+}
+
+/* Empty State */
+.empty-state {
+  @apply text-center py-16;
+}
+
+.empty-state-icon {
+  @apply w-16 h-16 text-gray-300 mx-auto mb-4;
+}
+
+/* Pagination */
+.pagination {
+  @apply flex items-center justify-center space-x-2 mt-8;
+}
+
+.pagination-button {
+  @apply px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.pagination-button.active {
+  @apply bg-rashford-red text-white border-rashford-red;
+}
+
+/* List View */
+.list-view {
+  @apply flex items-center space-x-6 p-6;
+}
+
+/* Tab Styles */
+.tab-button {
+  @apply px-6 py-3 border-b-2 border-transparent hover:border-gray-300 transition-colors font-medium;
+}
+
+.tab-button.active {
+  @apply border-rashford-red text-rashford-red;
+}
+
+.tab-content {
+  @apply hidden;
+}
+
+.tab-content.active {
+  @apply block;
+}
+
+/* Step Indicator */
+.step-indicator {
+  @apply w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center font-medium;
+}
+
+.step-indicator.active {
+  @apply border-rashford-red bg-rashford-red text-white;
+}
+
+.step-indicator.completed {
+  @apply border-rashford-gold bg-rashford-gold text-rashford-dark;
+}
+
+/* Dashboard Styles */
+.dashboard-sidebar {
+  @apply bg-white border-r border-gray-200;
+}
+
+.dashboard-menu-item {
+  @apply px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors;
+}
+
+.dashboard-menu-item.active {
+  @apply bg-rashford-red text-white;
+}
+
+/* Admin Styles */
+.admin-sidebar {
+  @apply bg-rashford-dark text-white w-64 min-h-screen fixed left-0 top-0 z-40;
+}
+
+.admin-menu-item {
+  @apply flex items-center space-x-3 px-6 py-3 hover:bg-white/10 transition-colors;
+}
+
+.admin-menu-item.active {
+  @apply bg-rashford-red;
+}
+
+.admin-header {
+  @apply bg-white shadow-sm border-b border-gray-200 px-6 py-4 ml-64;
+}
+
+.admin-content {
+  @apply ml-64 p-6 bg-gray-50 min-h-screen;
+}
+
+.admin-stats-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8;
+}
+
+.admin-stat-card {
+  @apply bg-white rounded-lg shadow p-6;
+}
+
+.admin-table {
+  @apply bg-white rounded-lg shadow overflow-hidden;
+}
+
+.admin-table-header {
+  @apply bg-gray-50 px-6 py-3 border-b border-gray-200;
+}
+
+.admin-table-row {
+  @apply px-6 py-4 border-b border-gray-200 hover:bg-gray-50;
+}
+
+/* Form Styles */
+.form-group {
+  @apply mb-4;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+.form-input {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent;
+}
+
+.form-textarea {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent resize-y;
+}
+
+.form-select {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent;
+}
+
+.form-error {
+  @apply text-red-500 text-sm mt-1;
+}
+
+/* File Upload */
+.file-upload-area {
+  @apply border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-rashford-red transition-colors cursor-pointer;
+}
+
+.file-upload-area.dragover {
+  @apply border-rashford-red bg-red-50;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4;
+}
+
+.modal-content {
+  @apply bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto;
+}
+
+.modal-header {
+  @apply px-6 py-4 border-b border-gray-200 flex items-center justify-between;
+}
+
+.modal-body {
+  @apply px-6 py-4;
+}
+
+.modal-footer {
+  @apply px-6 py-4 border-t border-gray-200 flex items-center justify-end space-x-3;
+}
+
+/* Currency Display */
+.currency {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+}
+
+.currency::before {
+  content: "₦";
+  margin-right: 2px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    @apply transform -translate-x-full transition-transform;
+  }
+
+  .admin-sidebar.open {
+    @apply transform translate-x-0;
+  }
+
+  .admin-header,
+  .admin-content {
+    @apply ml-0;
+  }
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.scale-in {
+  animation: scaleIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus Styles */
+.focus-visible:focus {
+  @apply outline-none ring-2 ring-rashford-red ring-offset-2;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--rashford-red);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b1611;
+}
+
+.marquee {
+  animation: marquee 160s linear infinite;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(-100%); /* Start off-screen to the left */
+  }
+  100% {
+    transform: translateX(100%); /* End off-screen to the right */
+  }
+}
