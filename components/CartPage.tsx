@@ -55,7 +55,7 @@ export default function CartPage({
   } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
-  const subtotal = getCartSubtotal();
+  const subtotal = getCartSubtotal() ?? 0;
   const tax = getCartTax();
   const shipping = getCartShipping();
   const discount = appliedPromo ? subtotal * 0.1 : 0; // 10% discount example
@@ -67,7 +67,7 @@ export default function CartPage({
     if (validCodes.includes(promoCode.toUpperCase())) {
       setAppliedPromo({
         code: promoCode.toUpperCase(),
-        discount: subtotal * 0.1,
+        discount: Number(subtotal) * 0.1,
         type: "percentage",
       });
       setShowPromoInput(false);
