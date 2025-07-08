@@ -138,7 +138,12 @@ export default function AuthModal({
           </div>
 
           {/* Form */}
-          <div className="p-6">
+          <div
+            className={`p-6 max-h-[80vh] overflow-y-auto ${
+              mode === "register" ? "mt-6" : ""
+            }`}
+          >
+            {" "}
             <form onSubmit={handleSubmit} className="space-y-4">
               {mode === "register" && (
                 <div>
@@ -285,14 +290,12 @@ export default function AuthModal({
                 )}
               </motion.button>
             </form>
-
             {/* Divider */}
             <div className="my-6 flex items-center">
               <div className="flex-1 border-t border-gray-300"></div>
               <span className="px-4 text-sm text-gray-500">or</span>
               <div className="flex-1 border-t border-gray-300"></div>
             </div>
-
             {/* Switch Mode */}
             <div className="mt-6 text-center">
               <span className="text-gray-600">
@@ -309,7 +312,6 @@ export default function AuthModal({
                 {mode === "login" ? "Sign up" : "Sign in"}
               </button>
             </div>
-
             {mode === "register" && (
               <p className="text-xs text-gray-500 text-center mt-4">
                 By creating an account, you agree to our{" "}

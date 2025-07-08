@@ -71,6 +71,7 @@ export default function Home() {
   // };
   const handleAuthClick = (mode: "login" | "register") => {
     setAuthMode(mode);
+    setShowAuthModal(true); // show the modal
   };
 
   const handleAuthSuccess = () => {
@@ -278,6 +279,17 @@ export default function Home() {
         categories={categories}
         products={products}
       />
+      {renderCurrentPage()}
+
+      {/* Auth Modal */}
+      {showAuthModal && (
+        <AuthModal
+          mode={authMode}
+          onClose={() => setShowAuthModal(false)}
+          onSuccess={handleAuthSuccess}
+          onSwitchMode={(mode) => setAuthMode(mode)}
+        />
+      )}
 
       <main className="pt-20">
         <AnimatePresence mode="wait">
