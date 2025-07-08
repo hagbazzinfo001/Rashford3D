@@ -199,10 +199,11 @@ export default function Navbar({
               <Image
                 src="/RR3logo2.svg"
                 alt="Rashford3D Logo"
-                width={40}
-                height={40}
+                width={80}
+                height={80}
+                className="w-[90px] h-[90px] md:w-[80px] md:h-[80px]"
               />
-              <span className="text-xl font-bold gradient-text">
+              <span className="text-xl font-bold gradient-text hidden  md:inline">
                 Rashford3D
               </span>
             </motion.div>
@@ -297,6 +298,8 @@ export default function Navbar({
                           className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer"
                         >
                           <Image
+                            width={48}
+                            height={48}
                             src={product.images[0]}
                             alt={product.name}
                             className="w-12 h-12 object-cover rounded-lg"
@@ -365,6 +368,8 @@ export default function Navbar({
                   >
                     {user?.avatar ? (
                       <Image
+                        width={24}
+                        height={24}
                         src={user.avatar}
                         alt={user.name}
                         className="w-6 h-6 rounded-full"
@@ -421,24 +426,26 @@ export default function Navbar({
                   </AnimatePresence>
                 </div>
               ) : (
-                <div className="flex items-center space-x-2">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => onAuthClick("login")}
-                    className="px-4 py-2 text-rashford-red hover:text-rashford-red/80 transition-colors"
-                  >
-                    Login
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => onAuthClick("register")}
-                    className="px-4 py-2 bg-rashford-red text-white rounded-lg hover:bg-rashford-red/90 transition-colors"
-                  >
-                    Sign Up
-                  </motion.button>
-                </div>
+                <>
+                  <div className="flex items-center space-x-2 hidden md:flex">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => onAuthClick("login")}
+                      className="px-4 py-2 text-rashford-red hover:text-rashford-red/80 transition-colors"
+                    >
+                      Login
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => onAuthClick("register")}
+                      className="px-4 py-2 bg-rashford-red text-white rounded-lg hover:bg-rashford-red/90 transition-colors"
+                    >
+                      Sign Up
+                    </motion.button>
+                  </div>
+                </>
               )}
 
               {/* Mobile Menu Button */}
@@ -465,32 +472,51 @@ export default function Navbar({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-white border-t"
+              className="md:hidden bg-white border-t flex flex-col justify-center items-center space-y-4"
             >
+              <div className="space-y-4">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <motion.button
+                      key={item.id}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => {
+                        onNavigate(item.id);
+                        setIsMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                        currentPage === item.id
+                          ? "bg-rashford-red text-white"
+                          : "text-gray-700 hover:text-rashford-red hover:bg-gray-50"
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="font-medium">{item.label}</span>
+                    </motion.button>
+                  );
+                })}
+              </div>
+              {/* Auth mobile */}
               <div className="container mx-auto px-4 py-4">
-                <div className="space-y-4">
-                  {navItems.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <motion.button
-                        key={item.id}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                          onNavigate(item.id);
-                          setIsMenuOpen(false);
-                        }}
-                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                          currentPage === item.id
-                            ? "bg-rashford-red text-white"
-                            : "text-gray-700 hover:text-rashford-red hover:bg-gray-50"
-                        }`}
-                      >
-                        <Icon className="w-5 h-5" />
-                        <span className="font-medium">{item.label}</span>
-                      </motion.button>
-                    );
-                  })}
+                <div className="flex justify-between items-center space-x-4 px-4 py-2 md:hidden">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => onAuthClick("login")}
+                    className="px-4 py-2 text-rashford-red hover:text-rashford-red/80 transition-colors"
+                  >
+                    Login
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => onAuthClick("register")}
+                    className="px-4 py-2 bg-rashford-red text-white rounded-lg hover:bg-rashford-red/90 transition-colors"
+                  >
+                    Sign Up
+                  </motion.button>
                 </div>
               </div>
             </motion.div>
@@ -556,6 +582,8 @@ export default function Navbar({
                         className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer"
                       >
                         <Image
+                          width={48}
+                          height={48}
                           src={product.images[0]}
                           alt={product.name}
                           className="w-12 h-12 object-cover rounded-lg"

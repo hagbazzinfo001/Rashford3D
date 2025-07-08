@@ -455,6 +455,8 @@ export default function UserDashboard({
                             className="border border-gray-200 rounded-lg p-4"
                           >
                             <Image
+                              width={200}
+                              height={200}
                               src={item.image}
                               alt={item.name}
                               className="w-full h-32 object-cover rounded-lg mb-3"
@@ -554,6 +556,8 @@ export default function UserDashboard({
                               className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg"
                             >
                               <Image
+                                width={64}
+                                height={64}
                                 src={item.image}
                                 alt={item.name}
                                 className="w-16 h-16 object-cover rounded-lg"
@@ -661,6 +665,8 @@ export default function UserDashboard({
                         >
                           <div className="relative">
                             <Image
+                              width={200}
+                              height={200}
                               src={item.image}
                               alt={item.name}
                               className="w-full h-48 object-cover"

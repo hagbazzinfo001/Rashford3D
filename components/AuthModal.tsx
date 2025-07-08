@@ -139,8 +139,8 @@ export default function AuthModal({
 
           {/* Form */}
           <div
-            className={`p-6 max-h-[80vh] overflow-y-auto ${
-              mode === "register" ? "mt-6" : ""
+            className={`p-6 max-h-[65vh] overflow-y-auto ${
+              mode === "register" ? "mt-9" : ""
             }`}
           >
             {" "}
