@@ -167,7 +167,7 @@ export default function Navbar({
                 <span>30-day money-back guarantee</span>
               </div>
             </div>
-            <div className="relative w-full h-10 flex items-center">
+            <div className="relative w-full h-10 items-center hidden sm:flex">
               <div className="flex items-center gap-4 text-sm whitespace-nowrap animate-marquee">
                 <span className="mx-4">|</span>
 

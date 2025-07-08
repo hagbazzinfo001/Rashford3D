@@ -481,6 +481,8 @@ export default function HomePage({
                 >
                   <div className="aspect-w-16 aspect-h-9">
                     <Image
+                      width={800}
+                      height={450}
                       src={category.image}
                       alt={category.name}
                       className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
@@ -567,6 +569,8 @@ export default function HomePage({
                 {/* Product Image */}
                 <div className="relative overflow-hidden">
                   <Image
+                    height={300}
+                    width={400}
                     src={product.images[0]}
                     alt={product.name}
                     className="w-full h-64 object-cover product-image"
@@ -585,7 +589,7 @@ export default function HomePage({
                 </div>
 
                 {/* Product Info */}
-                <div className="p-6">
+                <div className="p-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-gray-500 uppercase tracking-wide">
                       {product.brand}
@@ -607,7 +611,7 @@ export default function HomePage({
                   </p>
 
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
+                    <div className="flex  flex-col items-start ">
                       <span className="text-2xl font-bold text-rashford-red">
                         ${product.price}
                       </span>
@@ -724,6 +728,8 @@ export default function HomePage({
               >
                 <div className="flex items-center mb-6">
                   <Image
+                    width={64}
+                    height={64}
                     src={testimonials[testimonialSlide].avatar}
                     alt={testimonials[testimonialSlide].name}
                     className="w-16 h-16 rounded-full mr-4"
