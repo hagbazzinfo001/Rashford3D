@@ -1,7 +1,8 @@
-'use client';
+"use client";
+import type { LucideIcon } from "lucide-react";
 
-import { motion } from 'framer-motion';
-import { 
+import { motion } from "framer-motion";
+import {
   BarChart3,
   Package,
   ShoppingCart,
@@ -15,39 +16,47 @@ import {
   FileImage,
   Bell,
   DollarSign,
-} from 'lucide-react';
-import { useAdmin } from '@/contexts/AdminContext';
+} from "lucide-react";
+import { useAdmin } from "@/contexts/AdminContext";
 
 interface AdminSidebarProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
+  activeTab: AdminTab;
+  setActiveTab: (tab: AdminTab) => void; // Fix this line
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
 }
+type AdminTab =
+  | "overview"
+  | "products"
+  | "orders"
+  | "users"
+  | "categories"
+  | "analytics"
+  | "settings";
 
-export default function AdminSidebar({ 
-  activeTab, 
-  setActiveTab, 
-  sidebarOpen, 
-  setSidebarOpen 
+export default function AdminSidebar({
+  activeTab,
+  sidebarOpen,
+  setActiveTab, // ✅ add this
+
+  setSidebarOpen,
 }: AdminSidebarProps) {
   const { adminUser, adminLogout } = useAdmin();
-
-  const menuItems = [
-    { id: 'overview', label: 'Overview', icon: BarChart3 },
-    { id: 'products', label: 'Products', icon: Package },
-    { id: 'orders', label: 'Orders', icon: ShoppingCart },
-    { id: 'users', label: 'Users', icon: Users },
-    { id: 'categories', label: 'Categories', icon: Grid3X3 },
-    { id: 'analytics', label: 'Analytics', icon: TrendingUp },
-    { id: 'settings', label: 'Settings', icon: Settings },
+  const menuItems: { id: AdminTab; label: string; icon: LucideIcon }[] = [
+    { id: "overview", label: "Overview", icon: BarChart3 },
+    { id: "products", label: "Products", icon: Package },
+    { id: "orders", label: "Orders", icon: ShoppingCart },
+    { id: "users", label: "Users", icon: Users },
+    { id: "categories", label: "Categories", icon: Grid3X3 },
+    { id: "analytics", label: "Analytics", icon: TrendingUp },
+    { id: "settings", label: "Settings", icon: Settings },
   ];
 
   return (
     <>
       {/* Mobile Overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
@@ -57,7 +66,7 @@ export default function AdminSidebar({
       <motion.div
         initial={{ x: -300 }}
         animate={{ x: sidebarOpen ? 0 : -300 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
         className={`fixed left-0 top-0 h-full w-64 bg-rashford-dark text-white z-50 lg:translate-x-0 lg:static lg:z-auto`}
       >
         {/* Header */}
@@ -85,11 +94,13 @@ export default function AdminSidebar({
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-rashford-gold rounded-full flex items-center justify-center text-rashford-dark font-bold">
-              {adminUser?.name?.charAt(0) || 'A'}
+              {adminUser?.name?.charAt(0) || "A"}
             </div>
             <div>
               <p className="font-medium">{adminUser?.name}</p>
-              <p className="text-xs text-gray-400 capitalize">{adminUser?.role}</p>
+              <p className="text-xs text-gray-400 capitalize">
+                {adminUser?.role}
+              </p>
             </div>
           </div>
         </div>
@@ -109,7 +120,7 @@ export default function AdminSidebar({
                       setSidebarOpen(false);
                     }}
                     className={`admin-menu-item w-full ${
-                      activeTab === item.id ? 'active' : ''
+                      activeTab === item.id ? "active" : ""
                     }`}
                   >
                     <Icon className="w-5 h-5" />

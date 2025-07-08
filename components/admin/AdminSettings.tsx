@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { 
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
   Save,
   Upload,
   Bell,
@@ -15,94 +15,101 @@ import {
   Settings as SettingsIcon,
   Eye,
   EyeOff,
-} from 'lucide-react';
-import { toast } from 'react-hot-toast';
+} from "lucide-react";
+import { toast } from "react-hot-toast";
 
 export default function AdminSettings() {
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState("general");
   const [isLoading, setIsLoading] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
 
   const [settings, setSettings] = useState({
     // General Settings
-    siteName: 'Rashford3D',
-    siteDescription: 'Premium 3D Products & Electronics',
-    siteUrl: 'https://rashford3d.com',
-    adminEmail: 'admin@rashford3d.com',
-    timezone: 'Africa/Lagos',
-    currency: 'NGN',
-    language: 'en',
-    
+    siteName: "Rashford3D",
+    siteDescription: "Premium 3D Products & Electronics",
+    siteUrl: "https://rashford3d.com",
+    adminEmail: "admin@rashford3d.com",
+    timezone: "Africa/Lagos",
+    currency: "NGN",
+    language: "en",
+
     // Notification Settings
     emailNotifications: true,
     smsNotifications: false,
     orderNotifications: true,
     stockAlerts: true,
     lowStockThreshold: 10,
-    
+
     // Payment Settings
-    stripePublicKey: 'pk_test_...',
-    stripeSecretKey: 'sk_test_...',
-    paystackPublicKey: 'pk_test_...',
-    paystackSecretKey: 'sk_test_...',
-    
+    stripePublicKey: "pk_test_...",
+    stripeSecretKey: "sk_test_...",
+    paystackPublicKey: "pk_test_...",
+    paystackSecretKey: "sk_test_...",
+
     // Shipping Settings
     freeShippingThreshold: 40000,
     standardShippingRate: 2000,
     expressShippingRate: 5000,
-    
+
     // Security Settings
     twoFactorAuth: false,
     sessionTimeout: 30,
     passwordMinLength: 8,
     requirePasswordChange: false,
-    
+
     // API Settings
-    apiKey: 'rsh_api_key_...',
-    webhookUrl: '',
+    apiKey: "rsh_api_key_...",
+    webhookUrl: "",
     rateLimitPerHour: 1000,
   });
 
   const tabs = [
-    { id: 'general', label: 'General', icon: SettingsIcon },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'payments', label: 'Payments', icon: CreditCard },
-    { id: 'shipping', label: 'Shipping', icon: Truck },
-    { id: 'security', label: 'Security', icon: Shield },
-    { id: 'api', label: 'API', icon: Globe },
+    { id: "general", label: "General", icon: SettingsIcon },
+    { id: "notifications", label: "Notifications", icon: Bell },
+    { id: "payments", label: "Payments", icon: CreditCard },
+    { id: "shipping", label: "Shipping", icon: Truck },
+    { id: "security", label: "Security", icon: Shield },
+    { id: "api", label: "API", icon: Globe },
   ];
 
   const handleSave = async () => {
     setIsLoading(true);
     try {
       // In a real app, this would save to API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast.success('Settings saved successfully');
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast.success("Settings saved successfully");
     } catch (error) {
-      toast.error('Failed to save settings');
+      toast.error("Failed to save settings");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleInputChange = (field, value) => {
-    setSettings(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (
+    field: string,
+    value: string | number | boolean
+  ) => {
+    setSettings((prev) => ({ ...prev, [field]: value }));
   };
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'general':
+      case "general":
         return (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Site Information</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Site Information
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="form-group">
                   <label className="form-label">Site Name</label>
                   <input
                     type="text"
                     value={settings.siteName}
-                    onChange={(e) => handleInputChange('siteName', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("siteName", e.target.value)
+                    }
                     className="form-input"
                   />
                 </div>
@@ -111,7 +118,9 @@ export default function AdminSettings() {
                   <input
                     type="url"
                     value={settings.siteUrl}
-                    onChange={(e) => handleInputChange('siteUrl', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("siteUrl", e.target.value)
+                    }
                     className="form-input"
                   />
                 </div>
@@ -119,7 +128,9 @@ export default function AdminSettings() {
                   <label className="form-label">Site Description</label>
                   <textarea
                     value={settings.siteDescription}
-                    onChange={(e) => handleInputChange('siteDescription', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("siteDescription", e.target.value)
+                    }
                     className="form-textarea"
                     rows={3}
                   />
@@ -129,7 +140,9 @@ export default function AdminSettings() {
                   <input
                     type="email"
                     value={settings.adminEmail}
-                    onChange={(e) => handleInputChange('adminEmail', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("adminEmail", e.target.value)
+                    }
                     className="form-input"
                   />
                 </div>
@@ -137,12 +150,16 @@ export default function AdminSettings() {
                   <label className="form-label">Timezone</label>
                   <select
                     value={settings.timezone}
-                    onChange={(e) => handleInputChange('timezone', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("timezone", e.target.value)
+                    }
                     className="form-select"
                   >
                     <option value="Africa/Lagos">Africa/Lagos (WAT)</option>
                     <option value="UTC">UTC</option>
-                    <option value="America/New_York">America/New_York (EST)</option>
+                    <option value="America/New_York">
+                      America/New_York (EST)
+                    </option>
                     <option value="Europe/London">Europe/London (GMT)</option>
                   </select>
                 </div>
@@ -150,7 +167,9 @@ export default function AdminSettings() {
                   <label className="form-label">Currency</label>
                   <select
                     value={settings.currency}
-                    onChange={(e) => handleInputChange('currency', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("currency", e.target.value)
+                    }
                     className="form-select"
                   >
                     <option value="NGN">Nigerian Naira (₦)</option>
@@ -163,7 +182,9 @@ export default function AdminSettings() {
                   <label className="form-label">Language</label>
                   <select
                     value={settings.language}
-                    onChange={(e) => handleInputChange('language', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("language", e.target.value)
+                    }
                     className="form-select"
                   >
                     <option value="en">English</option>
@@ -177,24 +198,32 @@ export default function AdminSettings() {
           </div>
         );
 
-      case 'notifications':
+      case "notifications":
         return (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Notification Preferences</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Notification Preferences
+              </h3>
               <div className="space-y-4">
                 <label className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <Mail className="w-5 h-5 text-gray-400" />
                     <div>
-                      <span className="font-medium text-gray-900">Email Notifications</span>
-                      <p className="text-sm text-gray-500">Receive notifications via email</p>
+                      <span className="font-medium text-gray-900">
+                        Email Notifications
+                      </span>
+                      <p className="text-sm text-gray-500">
+                        Receive notifications via email
+                      </p>
                     </div>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.emailNotifications}
-                    onChange={(e) => handleInputChange('emailNotifications', e.target.checked)}
+                    onChange={(e) =>
+                      handleInputChange("emailNotifications", e.target.checked)
+                    }
                     className="rounded border-gray-300 text-rashford-red focus:ring-rashford-red"
                   />
                 </label>
@@ -203,14 +232,20 @@ export default function AdminSettings() {
                   <div className="flex items-center space-x-3">
                     <Smartphone className="w-5 h-5 text-gray-400" />
                     <div>
-                      <span className="font-medium text-gray-900">SMS Notifications</span>
-                      <p className="text-sm text-gray-500">Receive notifications via SMS</p>
+                      <span className="font-medium text-gray-900">
+                        SMS Notifications
+                      </span>
+                      <p className="text-sm text-gray-500">
+                        Receive notifications via SMS
+                      </p>
                     </div>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.smsNotifications}
-                    onChange={(e) => handleInputChange('smsNotifications', e.target.checked)}
+                    onChange={(e) =>
+                      handleInputChange("smsNotifications", e.target.checked)
+                    }
                     className="rounded border-gray-300 text-rashford-red focus:ring-rashford-red"
                   />
                 </label>
@@ -219,14 +254,20 @@ export default function AdminSettings() {
                   <div className="flex items-center space-x-3">
                     <Bell className="w-5 h-5 text-gray-400" />
                     <div>
-                      <span className="font-medium text-gray-900">Order Notifications</span>
-                      <p className="text-sm text-gray-500">Get notified about new orders</p>
+                      <span className="font-medium text-gray-900">
+                        Order Notifications
+                      </span>
+                      <p className="text-sm text-gray-500">
+                        Get notified about new orders
+                      </p>
                     </div>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.orderNotifications}
-                    onChange={(e) => handleInputChange('orderNotifications', e.target.checked)}
+                    onChange={(e) =>
+                      handleInputChange("orderNotifications", e.target.checked)
+                    }
                     className="rounded border-gray-300 text-rashford-red focus:ring-rashford-red"
                   />
                 </label>
@@ -235,14 +276,20 @@ export default function AdminSettings() {
                   <div className="flex items-center space-x-3">
                     <SettingsIcon className="w-5 h-5 text-gray-400" />
                     <div>
-                      <span className="font-medium text-gray-900">Stock Alerts</span>
-                      <p className="text-sm text-gray-500">Get notified when products are low in stock</p>
+                      <span className="font-medium text-gray-900">
+                        Stock Alerts
+                      </span>
+                      <p className="text-sm text-gray-500">
+                        Get notified when products are low in stock
+                      </p>
                     </div>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.stockAlerts}
-                    onChange={(e) => handleInputChange('stockAlerts', e.target.checked)}
+                    onChange={(e) =>
+                      handleInputChange("stockAlerts", e.target.checked)
+                    }
                     className="rounded border-gray-300 text-rashford-red focus:ring-rashford-red"
                   />
                 </label>
@@ -252,33 +299,46 @@ export default function AdminSettings() {
                   <input
                     type="number"
                     value={settings.lowStockThreshold}
-                    onChange={(e) => handleInputChange('lowStockThreshold', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "lowStockThreshold",
+                        parseInt(e.target.value)
+                      )
+                    }
                     className="form-input"
                     min="1"
                   />
-                  <p className="text-sm text-gray-500 mt-1">Alert when product stock falls below this number</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Alert when product stock falls below this number
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         );
 
-      case 'payments':
+      case "payments":
         return (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment Gateway Settings</h3>
-              
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Payment Gateway Settings
+              </h3>
+
               <div className="space-y-6">
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Stripe Configuration</h4>
+                  <h4 className="font-medium text-gray-900 mb-3">
+                    Stripe Configuration
+                  </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="form-group">
                       <label className="form-label">Stripe Public Key</label>
                       <input
                         type="text"
                         value={settings.stripePublicKey}
-                        onChange={(e) => handleInputChange('stripePublicKey', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("stripePublicKey", e.target.value)
+                        }
                         className="form-input"
                         placeholder="pk_test_..."
                       />
@@ -288,7 +348,9 @@ export default function AdminSettings() {
                       <input
                         type="password"
                         value={settings.stripeSecretKey}
-                        onChange={(e) => handleInputChange('stripeSecretKey', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("stripeSecretKey", e.target.value)
+                        }
                         className="form-input"
                         placeholder="sk_test_..."
                       />
@@ -297,14 +359,18 @@ export default function AdminSettings() {
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Paystack Configuration</h4>
+                  <h4 className="font-medium text-gray-900 mb-3">
+                    Paystack Configuration
+                  </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="form-group">
                       <label className="form-label">Paystack Public Key</label>
                       <input
                         type="text"
                         value={settings.paystackPublicKey}
-                        onChange={(e) => handleInputChange('paystackPublicKey', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("paystackPublicKey", e.target.value)
+                        }
                         className="form-input"
                         placeholder="pk_test_..."
                       />
@@ -314,7 +380,9 @@ export default function AdminSettings() {
                       <input
                         type="password"
                         value={settings.paystackSecretKey}
-                        onChange={(e) => handleInputChange('paystackSecretKey', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("paystackSecretKey", e.target.value)
+                        }
                         className="form-input"
                         placeholder="sk_test_..."
                       />
@@ -326,39 +394,64 @@ export default function AdminSettings() {
           </div>
         );
 
-      case 'shipping':
+      case "shipping":
         return (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Shipping Configuration</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Shipping Configuration
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="form-group">
-                  <label className="form-label">Free Shipping Threshold (₦)</label>
+                  <label className="form-label">
+                    Free Shipping Threshold (₦)
+                  </label>
                   <input
                     type="number"
                     value={settings.freeShippingThreshold}
-                    onChange={(e) => handleInputChange('freeShippingThreshold', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "freeShippingThreshold",
+                        parseInt(e.target.value)
+                      )
+                    }
                     className="form-input"
                     min="0"
                   />
-                  <p className="text-sm text-gray-500 mt-1">Orders above this amount get free shipping</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Orders above this amount get free shipping
+                  </p>
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Standard Shipping Rate (₦)</label>
+                  <label className="form-label">
+                    Standard Shipping Rate (₦)
+                  </label>
                   <input
                     type="number"
                     value={settings.standardShippingRate}
-                    onChange={(e) => handleInputChange('standardShippingRate', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "standardShippingRate",
+                        parseInt(e.target.value)
+                      )
+                    }
                     className="form-input"
                     min="0"
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Express Shipping Rate (₦)</label>
+                  <label className="form-label">
+                    Express Shipping Rate (₦)
+                  </label>
                   <input
                     type="number"
                     value={settings.expressShippingRate}
-                    onChange={(e) => handleInputChange('expressShippingRate', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "expressShippingRate",
+                        parseInt(e.target.value)
+                      )
+                    }
                     className="form-input"
                     min="0"
                   />
@@ -368,43 +461,65 @@ export default function AdminSettings() {
           </div>
         );
 
-      case 'security':
+      case "security":
         return (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Security Settings</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Security Settings
+              </h3>
               <div className="space-y-4">
                 <label className="flex items-center justify-between">
                   <div>
-                    <span className="font-medium text-gray-900">Two-Factor Authentication</span>
-                    <p className="text-sm text-gray-500">Add an extra layer of security to admin accounts</p>
+                    <span className="font-medium text-gray-900">
+                      Two-Factor Authentication
+                    </span>
+                    <p className="text-sm text-gray-500">
+                      Add an extra layer of security to admin accounts
+                    </p>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.twoFactorAuth}
-                    onChange={(e) => handleInputChange('twoFactorAuth', e.target.checked)}
+                    onChange={(e) =>
+                      handleInputChange("twoFactorAuth", e.target.checked)
+                    }
                     className="rounded border-gray-300 text-rashford-red focus:ring-rashford-red"
                   />
                 </label>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="form-group">
-                    <label className="form-label">Session Timeout (minutes)</label>
+                    <label className="form-label">
+                      Session Timeout (minutes)
+                    </label>
                     <input
                       type="number"
                       value={settings.sessionTimeout}
-                      onChange={(e) => handleInputChange('sessionTimeout', parseInt(e.target.value))}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "sessionTimeout",
+                          parseInt(e.target.value)
+                        )
+                      }
                       className="form-input"
                       min="5"
                       max="480"
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Minimum Password Length</label>
+                    <label className="form-label">
+                      Minimum Password Length
+                    </label>
                     <input
                       type="number"
                       value={settings.passwordMinLength}
-                      onChange={(e) => handleInputChange('passwordMinLength', parseInt(e.target.value))}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "passwordMinLength",
+                          parseInt(e.target.value)
+                        )
+                      }
                       className="form-input"
                       min="6"
                       max="32"
@@ -414,13 +529,22 @@ export default function AdminSettings() {
 
                 <label className="flex items-center justify-between">
                   <div>
-                    <span className="font-medium text-gray-900">Require Password Change</span>
-                    <p className="text-sm text-gray-500">Force users to change passwords every 90 days</p>
+                    <span className="font-medium text-gray-900">
+                      Require Password Change
+                    </span>
+                    <p className="text-sm text-gray-500">
+                      Force users to change passwords every 90 days
+                    </p>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.requirePasswordChange}
-                    onChange={(e) => handleInputChange('requirePasswordChange', e.target.checked)}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "requirePasswordChange",
+                        e.target.checked
+                      )
+                    }
                     className="rounded border-gray-300 text-rashford-red focus:ring-rashford-red"
                   />
                 </label>
@@ -429,19 +553,23 @@ export default function AdminSettings() {
           </div>
         );
 
-      case 'api':
+      case "api":
         return (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">API Configuration</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                API Configuration
+              </h3>
               <div className="space-y-4">
                 <div className="form-group">
                   <label className="form-label">API Key</label>
                   <div className="relative">
                     <input
-                      type={showApiKey ? 'text' : 'password'}
+                      type={showApiKey ? "text" : "password"}
                       value={settings.apiKey}
-                      onChange={(e) => handleInputChange('apiKey', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("apiKey", e.target.value)
+                      }
                       className="form-input pr-10"
                       readOnly
                     />
@@ -450,10 +578,16 @@ export default function AdminSettings() {
                       onClick={() => setShowApiKey(!showApiKey)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
-                      {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showApiKey ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">Use this key to authenticate API requests</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Use this key to authenticate API requests
+                  </p>
                 </div>
 
                 <div className="form-group">
@@ -461,19 +595,30 @@ export default function AdminSettings() {
                   <input
                     type="url"
                     value={settings.webhookUrl}
-                    onChange={(e) => handleInputChange('webhookUrl', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("webhookUrl", e.target.value)
+                    }
                     className="form-input"
                     placeholder="https://your-site.com/webhook"
                   />
-                  <p className="text-sm text-gray-500 mt-1">URL to receive webhook notifications</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    URL to receive webhook notifications
+                  </p>
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Rate Limit (requests per hour)</label>
+                  <label className="form-label">
+                    Rate Limit (requests per hour)
+                  </label>
                   <input
                     type="number"
                     value={settings.rateLimitPerHour}
-                    onChange={(e) => handleInputChange('rateLimitPerHour', parseInt(e.target.value))}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "rateLimitPerHour",
+                        parseInt(e.target.value)
+                      )
+                    }
                     className="form-input"
                     min="100"
                     max="10000"
@@ -481,10 +626,14 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <h4 className="font-medium text-yellow-800 mb-2">API Documentation</h4>
+                  <h4 className="font-medium text-yellow-800 mb-2">
+                    API Documentation
+                  </h4>
                   <p className="text-sm text-yellow-700">
-                    View the complete API documentation at{' '}
-                    <a href="#" className="underline">https://docs.rashford3d.com/api</a>
+                    View the complete API documentation at{" "}
+                    <a href="#" className="underline">
+                      https://docs.rashford3d.com/api
+                    </a>
                   </p>
                 </div>
               </div>
@@ -503,7 +652,9 @@ export default function AdminSettings() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">System Settings</h2>
-          <p className="text-gray-600">Configure your application settings and preferences</p>
+          <p className="text-gray-600">
+            Configure your application settings and preferences
+          </p>
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }}
@@ -533,7 +684,9 @@ export default function AdminSettings() {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`w-full flex items-center space-x-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors ${
-                      activeTab === tab.id ? 'bg-rashford-red text-white hover:bg-rashford-red' : 'text-gray-700'
+                      activeTab === tab.id
+                        ? "bg-rashford-red text-white hover:bg-rashford-red"
+                        : "text-gray-700"
                     }`}
                   >
                     <Icon className="w-5 h-5" />

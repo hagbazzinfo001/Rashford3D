@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import { ReactEventHandler, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import {
   Plus,
   Search,
   Edit,
@@ -12,140 +13,183 @@ import {
   X,
   Upload,
   Image as ImageIcon,
-} from 'lucide-react';
-import { useProducts } from '@/contexts/ProductContext';
-import { toast } from 'react-hot-toast';
-import { useDropzone } from 'react-dropzone';
+} from "lucide-react";
+import { useProducts } from "@/contexts/ProductContext";
+import { toast } from "react-hot-toast";
+import { useDropzone } from "react-dropzone";
+// types.ts
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  image: string;
+  parentId?: string;
+  productCount?: number;
+}
+type CategoryForm = Omit<Category, "id" | "productCount">;
 
 export default function AdminCategories() {
-  const { 
-    categories, 
-    addCategory, 
-    updateCategory, 
-    deleteCategory 
-  } = useProducts();
+  const { categories, addCategory, updateCategory, deleteCategory } =
+    useProducts();
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [editingCategory, setEditingCategory] = useState(null);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [categoryForm, setCategoryForm] = useState({
-    name: '',
-    slug: '',
-    description: '',
-    image: '',
-    parentId: '',
+  // const [categoryForm, setCategoryForm] = useState({
+  //   name: "",
+  //   slug: "",
+  //   description: "",
+  //   image: "",
+  //   parentId: "",
+  // });
+  type CategoryFormFields = {
+    name: string;
+    slug: string;
+    description: string;
+    image: string;
+    parentId: string;
+  };
+
+  const [categoryForm, setCategoryForm] = useState<CategoryFormFields>({
+    name: "",
+    slug: "",
+    description: "",
+    image: "",
+    parentId: "",
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof CategoryFormFields, string>>
+  >({});
 
   // Filter categories
-  const filteredCategories = categories.filter(category =>
-    category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    category.description.toLowerCase().includes(searchQuery.toLowerCase())
+  // const filteredCategories = categories.filter(
+  //   (category) =>
+  //     category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     category.description.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
+  const filteredCategories = categories.filter(
+    (category) =>
+      category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      category.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+      "image/*": [".jpeg", ".jpg", ".png", ".webp"],
     },
     multiple: false,
     onDrop: (acceptedFiles) => {
       if (acceptedFiles.length > 0) {
         // In a real app, you would upload to Cloudinary/Firebase here
         const imageUrl = URL.createObjectURL(acceptedFiles[0]);
-        setCategoryForm(prev => ({ ...prev, image: imageUrl }));
-        toast.success('Image uploaded successfully');
+        setCategoryForm((prev) => ({ ...prev, image: imageUrl }));
+        toast.success("Image uploaded successfully");
       }
-    }
+    },
   });
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Partial<Record<keyof CategoryFormFields, string>> = {};
 
-    if (!categoryForm.name.trim()) newErrors.name = 'Category name is required';
-    if (!categoryForm.slug.trim()) newErrors.slug = 'Category slug is required';
-    if (!categoryForm.description.trim()) newErrors.description = 'Description is required';
-    if (!categoryForm.image) newErrors.image = 'Category image is required';
+    if (!categoryForm.name.trim()) newErrors.name = "Category name is required";
+    if (!categoryForm.slug.trim()) newErrors.slug = "Category slug is required";
+    if (!categoryForm.description.trim())
+      newErrors.description = "Description is required";
+    if (!categoryForm.image) newErrors.image = "Category image is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const generateSlug = (name) => {
+  const generateSlug = (name: string) => {
     return name
       .toLowerCase()
-      .replace(/[^a-z0-9 -]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim('-');
+      .replace(/[^a-z0-9 -]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .trim();
   };
 
-  const handleNameChange = (name) => {
-    setCategoryForm(prev => ({
+  const handleNameChange = (name: string) => {
+    setCategoryForm((prev) => ({
       ...prev,
       name,
-      slug: generateSlug(name)
+      slug: generateSlug(name),
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
     try {
       if (editingCategory) {
         await updateCategory(editingCategory.id, categoryForm);
-        toast.success('Category updated successfully');
+        toast.success("Category updated successfully");
         setShowEditModal(false);
       } else {
         await addCategory(categoryForm);
-        toast.success('Category added successfully');
+        toast.success("Category added successfully");
         setShowAddModal(false);
       }
 
       resetForm();
     } catch (error) {
-      toast.error(error.message || 'Failed to save category');
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleEdit = (category) => {
+  const handleEdit = (category: Category) => {
     setEditingCategory(category);
     setCategoryForm({
       name: category.name,
       slug: category.slug,
       description: category.description,
       image: category.image,
-      parentId: category.parentId || '',
+      parentId: category.parentId || "",
     });
     setShowEditModal(true);
   };
 
-  const handleDelete = async (categoryId) => {
-    if (window.confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
+  const handleDelete = async (categoryId: string) => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this category? This action cannot be undone."
+      )
+    ) {
       try {
         await deleteCategory(categoryId);
-        toast.success('Category deleted successfully');
+        toast.success("Category deleted successfully");
       } catch (error) {
-        toast.error(error.message || 'Failed to delete category');
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("Failed to save category");
+        }
       }
     }
   };
 
   const resetForm = () => {
     setCategoryForm({
-      name: '',
-      slug: '',
-      description: '',
-      image: '',
-      parentId: '',
+      name: "",
+      slug: "",
+      description: "",
+      image: "",
+      parentId: "",
     });
     setErrors({});
     setEditingCategory(null);
@@ -156,8 +200,12 @@ export default function AdminCategories() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Category Management</h2>
-          <p className="text-gray-600">Organize your products with categories</p>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Category Management
+          </h2>
+          <p className="text-gray-600">
+            Organize your products with categories
+          </p>
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }}
@@ -195,7 +243,7 @@ export default function AdminCategories() {
             className="admin-card group"
           >
             <div className="relative">
-              <img
+              <Image
                 src={category.image}
                 alt={category.name}
                 className="w-full h-48 object-cover rounded-lg mb-4"
@@ -209,7 +257,9 @@ export default function AdminCategories() {
 
             <div className="space-y-2">
               <h3 className="font-semibold text-gray-900">{category.name}</h3>
-              <p className="text-sm text-gray-600 line-clamp-2">{category.description}</p>
+              <p className="text-sm text-gray-600 line-clamp-2">
+                {category.description}
+              </p>
               <p className="text-xs text-gray-500">Slug: {category.slug}</p>
 
               <div className="flex items-center gap-2 pt-2">
@@ -240,17 +290,15 @@ export default function AdminCategories() {
       {filteredCategories.length === 0 && (
         <div className="admin-card text-center py-12">
           <Grid3X3 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No categories found</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No categories found
+          </h3>
           <p className="text-gray-600 mb-6">
-            {searchQuery 
-              ? 'Try adjusting your search criteria'
-              : 'Get started by adding your first category'
-            }
+            {searchQuery
+              ? "Try adjusting your search criteria"
+              : "Get started by adding your first category"}
           </p>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="btn-admin"
-          >
+          <button onClick={() => setShowAddModal(true)} className="btn-admin">
             Add Category
           </button>
         </div>
@@ -268,7 +316,7 @@ export default function AdminCategories() {
             >
               <div className="modal-header">
                 <h3 className="text-lg font-semibold">
-                  {editingCategory ? 'Edit Category' : 'Add New Category'}
+                  {editingCategory ? "Edit Category" : "Add New Category"}
                 </h3>
                 <button
                   onClick={() => {
@@ -291,7 +339,9 @@ export default function AdminCategories() {
                       type="text"
                       value={categoryForm.name}
                       onChange={(e) => handleNameChange(e.target.value)}
-                      className={`form-input ${errors.name ? 'border-red-500' : ''}`}
+                      className={`form-input ${
+                        errors.name ? "border-red-500" : ""
+                      }`}
                       placeholder="Enter category name"
                     />
                     {errors.name && <p className="form-error">{errors.name}</p>}
@@ -302,12 +352,21 @@ export default function AdminCategories() {
                     <input
                       type="text"
                       value={categoryForm.slug}
-                      onChange={(e) => setCategoryForm(prev => ({ ...prev, slug: e.target.value }))}
-                      className={`form-input ${errors.slug ? 'border-red-500' : ''}`}
+                      onChange={(e) =>
+                        setCategoryForm((prev) => ({
+                          ...prev,
+                          slug: e.target.value,
+                        }))
+                      }
+                      className={`form-input ${
+                        errors.slug ? "border-red-500" : ""
+                      }`}
                       placeholder="category-slug"
                     />
                     {errors.slug && <p className="form-error">{errors.slug}</p>}
-                    <p className="text-xs text-gray-500 mt-1">URL-friendly version of the name</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      URL-friendly version of the name
+                    </p>
                   </div>
                 </div>
 
@@ -315,25 +374,42 @@ export default function AdminCategories() {
                   <label className="form-label">Description *</label>
                   <textarea
                     value={categoryForm.description}
-                    onChange={(e) => setCategoryForm(prev => ({ ...prev, description: e.target.value }))}
-                    className={`form-textarea ${errors.description ? 'border-red-500' : ''}`}
+                    onChange={(e) =>
+                      setCategoryForm((prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }))
+                    }
+                    className={`form-textarea ${
+                      errors.description ? "border-red-500" : ""
+                    }`}
                     rows={3}
                     placeholder="Enter category description"
                   />
-                  {errors.description && <p className="form-error">{errors.description}</p>}
+                  {errors.description && (
+                    <p className="form-error">{errors.description}</p>
+                  )}
                 </div>
 
                 <div className="form-group">
                   <label className="form-label">Parent Category</label>
                   <select
                     value={categoryForm.parentId}
-                    onChange={(e) => setCategoryForm(prev => ({ ...prev, parentId: e.target.value }))}
+                    onChange={(e) =>
+                      setCategoryForm((prev) => ({
+                        ...prev,
+                        parentId: e.target.value,
+                      }))
+                    }
                     className="form-select"
                   >
                     <option value="">No parent (Top level category)</option>
                     {categories
-                      .filter(cat => !editingCategory || cat.id !== editingCategory.id)
-                      .map(category => (
+                      .filter(
+                        (cat) =>
+                          !editingCategory || cat.id !== editingCategory.id
+                      )
+                      .map((category) => (
                         <option key={category.id} value={category.id}>
                           {category.name}
                         </option>
@@ -346,20 +422,26 @@ export default function AdminCategories() {
                   <label className="form-label">Category Image *</label>
                   <div
                     {...getRootProps()}
-                    className={`file-upload-area ${isDragActive ? 'dragover' : ''} ${errors.image ? 'border-red-500' : ''}`}
+                    className={`file-upload-area ${
+                      isDragActive ? "dragover" : ""
+                    } ${errors.image ? "border-red-500" : ""}`}
                   >
                     <input {...getInputProps()} />
                     <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <p className="text-gray-600 mb-2">
-                      {isDragActive ? 'Drop image here...' : 'Drag & drop an image here, or click to select'}
+                      {isDragActive
+                        ? "Drop image here..."
+                        : "Drag & drop an image here, or click to select"}
                     </p>
-                    <p className="text-sm text-gray-500">Supports: JPG, PNG, WebP</p>
+                    <p className="text-sm text-gray-500">
+                      Supports: JPG, PNG, WebP
+                    </p>
                   </div>
                   {errors.image && <p className="form-error">{errors.image}</p>}
 
                   {categoryForm.image && (
                     <div className="mt-4">
-                      <img
+                      <Image
                         src={categoryForm.image}
                         alt="Category preview"
                         className="w-32 h-32 object-cover rounded-lg"
@@ -382,7 +464,11 @@ export default function AdminCategories() {
                   Cancel
                 </button>
                 <button
-                  onClick={handleSubmit}
+                  onClick={(e) =>
+                    handleSubmit(
+                      e as unknown as React.FormEvent<HTMLFormElement>
+                    )
+                  }
                   disabled={isLoading}
                   className="btn-admin flex items-center gap-2"
                 >
@@ -391,7 +477,7 @@ export default function AdminCategories() {
                   ) : (
                     <Save className="w-4 h-4" />
                   )}
-                  {editingCategory ? 'Update Category' : 'Add Category'}
+                  {editingCategory ? "Update Category" : "Add Category"}
                 </button>
               </div>
             </motion.div>

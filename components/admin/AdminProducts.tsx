@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import {
   Plus,
   Search,
   Filter,
@@ -16,93 +17,188 @@ import {
   DollarSign,
   Tag,
   Image as ImageIcon,
-} from 'lucide-react';
-import { useProducts } from '@/contexts/ProductContext';
-import { toast } from 'react-hot-toast';
-import { useDropzone } from 'react-dropzone';
+} from "lucide-react";
+import { useProducts } from "@/contexts/ProductContext";
+import { toast } from "react-hot-toast";
+import { useDropzone } from "react-dropzone";
+type ProductFormErrors = Partial<Record<keyof ProductFormType, string>>;
 
+interface Product {
+  id?: string;
+  name: string;
+  description: string;
+  price: number;
+  originalPrice?: number;
+  category: string;
+  subcategory?: string;
+  brand: string;
+  stockQuantity: number;
+  sku: string;
+  tags: string[];
+  features: string[];
+  specifications: Record<string, any>;
+  images: string[];
+  isFeatured: boolean;
+  isNew: boolean;
+  isOnSale: boolean;
+  discountPercentage?: number;
+  rating?: number;
+  reviewCount?: number;
+  inStock: boolean;
+  reviews: any[];
+  shipping: {
+    weight: number;
+    dimensions: {
+      length: number;
+      width: number;
+      height: number;
+    };
+    freeShipping: boolean;
+    estimatedDelivery: string;
+  };
+}
+
+interface ProductFormType {
+  name: string;
+  description: string;
+  price: string;
+  originalPrice: string;
+  category: string;
+  subcategory: string;
+  brand: string;
+  stockQuantity: string;
+  sku: string;
+  tags: string;
+  features: string;
+  specifications: string;
+  images: string[];
+  isFeatured: boolean;
+  isNew: boolean;
+  isOnSale: boolean;
+  discountPercentage: string;
+}
+
+// interface ProductFormType {
+//   name: string;
+//   description: string;
+//   price: string;
+//   originalPrice: string;
+//   category: string;
+//   subcategory: string;
+//   brand: string;
+//   stockQuantity: string;
+//   sku: string;
+//   tags: string;
+//   features: string;
+//   specifications: string;
+//   images: string[];
+//   isFeatured: boolean;
+//   isNew: boolean;
+//   isOnSale: boolean;
+//   discountPercentage: string;
+// }
 export default function AdminProducts() {
-  const { 
-    products, 
-    categories, 
-    addProduct, 
-    updateProduct, 
-    deleteProduct 
-  } = useProducts();
+  const { products, categories, addProduct, updateProduct, deleteProduct } =
+    useProducts();
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [productForm, setProductForm] = useState({
-    name: '',
-    description: '',
-    price: '',
-    originalPrice: '',
-    category: '',
-    subcategory: '',
-    brand: '',
-    stockQuantity: '',
-    sku: '',
-    tags: '',
-    features: '',
-    specifications: '',
+  // const [productForm, setProductForm] = useState<ProductFormType>({
+  //   name: "",
+  //   description: "",
+  //   price: "",
+  //   originalPrice: "",
+  //   category: "",
+  //   subcategory: "",
+  //   brand: "",
+  //   stockQuantity: "",
+  //   sku: "",
+  //   tags: "",
+  //   features: "",
+  //   specifications: "",
+  //   images: [],
+  //   isFeatured: false,
+  //   isNew: false,
+  //   isOnSale: false,
+  //   discountPercentage: "",
+  // });
+  const [productForm, setProductForm] = useState<ProductFormType>({
+    name: "",
+    description: "",
+    price: "",
+    originalPrice: "",
+    category: "",
+    subcategory: "",
+    brand: "",
+    stockQuantity: "",
+    sku: "",
+    tags: "",
+    features: "",
+    specifications: "",
     images: [],
     isFeatured: false,
     isNew: false,
     isOnSale: false,
-    discountPercentage: '',
+    discountPercentage: "",
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<ProductFormErrors>({});
 
   // Filter products
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.sku.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+  const filteredProducts = products.filter((product: Product) => {
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.sku.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "all" || product.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+      "image/*": [".jpeg", ".jpg", ".png", ".webp"],
     },
     multiple: true,
-    onDrop: (acceptedFiles) => {
+    onDrop: (acceptedFiles: File[]) => {
       // In a real app, you would upload to Cloudinary/Firebase here
-      const imageUrls = acceptedFiles.map(file => URL.createObjectURL(file));
-      setProductForm(prev => ({
+      const imageUrls = acceptedFiles.map((file) => URL.createObjectURL(file));
+      setProductForm((prev) => ({
         ...prev,
-        images: [...prev.images, ...imageUrls]
+        images: [...prev.images, ...imageUrls],
       }));
       toast.success(`${acceptedFiles.length} image(s) uploaded successfully`);
-    }
+    },
   });
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: ProductFormErrors = {};
 
-    if (!productForm.name.trim()) newErrors.name = 'Product name is required';
-    if (!productForm.description.trim()) newErrors.description = 'Description is required';
-    if (!productForm.price || isNaN(Number(productForm.price))) newErrors.price = 'Valid price is required';
-    if (!productForm.category) newErrors.category = 'Category is required';
-    if (!productForm.brand.trim()) newErrors.brand = 'Brand is required';
-    if (!productForm.stockQuantity || isNaN(Number(productForm.stockQuantity))) newErrors.stockQuantity = 'Valid stock quantity is required';
-    if (!productForm.sku.trim()) newErrors.sku = 'SKU is required';
-    if (productForm.images.length === 0) newErrors.images = 'At least one image is required';
+    if (!productForm.name.trim()) newErrors.name = "Product name is required";
+    if (!productForm.description.trim())
+      newErrors.description = "Description is required";
+    if (!productForm.price || isNaN(Number(productForm.price)))
+      newErrors.price = "Valid price is required";
+    if (!productForm.category) newErrors.category = "Category is required";
+    if (!productForm.brand.trim()) newErrors.brand = "Brand is required";
+    if (!productForm.stockQuantity || isNaN(Number(productForm.stockQuantity)))
+      newErrors.stockQuantity = "Valid stock quantity is required";
+    if (!productForm.sku.trim()) newErrors.sku = "SKU is required";
+    if (productForm.images.length === 0)
+      newErrors.images = "At least one image is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
@@ -110,12 +206,24 @@ export default function AdminProducts() {
       const productData = {
         ...productForm,
         price: Number(productForm.price),
-        originalPrice: productForm.originalPrice ? Number(productForm.originalPrice) : undefined,
+        originalPrice: productForm.originalPrice
+          ? Number(productForm.originalPrice)
+          : undefined,
         stockQuantity: Number(productForm.stockQuantity),
-        discountPercentage: productForm.discountPercentage ? Number(productForm.discountPercentage) : undefined,
-        tags: productForm.tags.split(',').map(tag => tag.trim()).filter(Boolean),
-        features: productForm.features.split('\n').map(feature => feature.trim()).filter(Boolean),
-        specifications: productForm.specifications ? JSON.parse(productForm.specifications) : {},
+        discountPercentage: productForm.discountPercentage
+          ? Number(productForm.discountPercentage)
+          : undefined,
+        tags: productForm.tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+        features: productForm.features
+          .split("\n")
+          .map((feature) => feature.trim())
+          .filter(Boolean),
+        specifications: productForm.specifications
+          ? JSON.parse(productForm.specifications)
+          : {},
         rating: 0,
         reviewCount: 0,
         inStock: Number(productForm.stockQuantity) > 0,
@@ -124,91 +232,99 @@ export default function AdminProducts() {
           weight: 1,
           dimensions: { length: 10, width: 10, height: 10 },
           freeShipping: Number(productForm.price) > 40000, // Free shipping over ₦40,000
-          estimatedDelivery: '2-4 business days',
+          estimatedDelivery: "2-4 business days",
         },
       };
 
-      if (editingProduct) {
+      if (editingProduct?.id) {
         await updateProduct(editingProduct.id, productData);
-        toast.success('Product updated successfully');
+        toast.success("Product updated successfully");
         setShowEditModal(false);
       } else {
         await addProduct(productData);
-        toast.success('Product added successfully');
+        toast.success("Product added successfully");
         setShowAddModal(false);
       }
 
       resetForm();
     } catch (error) {
-      toast.error(error.message || 'Failed to save product');
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to save product");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleEdit = (product) => {
+  const handleEdit = (product: Product) => {
     setEditingProduct(product);
     setProductForm({
       name: product.name,
       description: product.description,
       price: product.price.toString(),
-      originalPrice: product.originalPrice?.toString() || '',
+      originalPrice: product.originalPrice?.toString() || "",
       category: product.category,
-      subcategory: product.subcategory || '',
+      subcategory: product.subcategory || "",
       brand: product.brand,
       stockQuantity: product.stockQuantity.toString(),
       sku: product.sku,
-      tags: product.tags.join(', '),
-      features: product.features.join('\n'),
+      tags: product.tags.join(", "),
+      features: product.features.join("\n"),
       specifications: JSON.stringify(product.specifications, null, 2),
       images: product.images,
       isFeatured: product.isFeatured,
       isNew: product.isNew,
       isOnSale: product.isOnSale,
-      discountPercentage: product.discountPercentage?.toString() || '',
+      discountPercentage: product.discountPercentage?.toString() || "",
     });
     setShowEditModal(true);
   };
 
-  const handleDelete = async (productId) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
+  const handleDelete = async (productId: string) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
       try {
         await deleteProduct(productId);
-        toast.success('Product deleted successfully');
+        toast.success("Product deleted successfully");
       } catch (error) {
-        toast.error(error.message || 'Failed to delete product');
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("Failed to save product");
+        }
       }
     }
   };
 
   const resetForm = () => {
     setProductForm({
-      name: '',
-      description: '',
-      price: '',
-      originalPrice: '',
-      category: '',
-      subcategory: '',
-      brand: '',
-      stockQuantity: '',
-      sku: '',
-      tags: '',
-      features: '',
-      specifications: '',
+      name: "",
+      description: "",
+      price: "",
+      originalPrice: "",
+      category: "",
+      subcategory: "",
+      brand: "",
+      stockQuantity: "",
+      sku: "",
+      tags: "",
+      features: "",
+      specifications: "",
       images: [],
       isFeatured: false,
       isNew: false,
       isOnSale: false,
-      discountPercentage: '',
+      discountPercentage: "",
     });
     setErrors({});
     setEditingProduct(null);
   };
 
-  const removeImage = (index) => {
-    setProductForm(prev => ({
+  const removeImage = (index: number) => {
+    setProductForm((prev) => ({
       ...prev,
-      images: prev.images.filter((_, i) => i !== index)
+      images: prev.images.filter((_, i) => i !== index),
     }));
   };
 
@@ -217,8 +333,12 @@ export default function AdminProducts() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Product Management</h2>
-          <p className="text-gray-600">Manage your product catalog and inventory</p>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Product Management
+          </h2>
+          <p className="text-gray-600">
+            Manage your product catalog and inventory
+          </p>
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }}
@@ -250,7 +370,7 @@ export default function AdminProducts() {
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent"
           >
             <option value="all">All Categories</option>
-            {categories.map(category => (
+            {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
@@ -270,7 +390,7 @@ export default function AdminProducts() {
             className="admin-card group"
           >
             <div className="relative">
-              <img
+              <Image
                 src={product.images[0]}
                 alt={product.name}
                 className="w-full h-48 object-cover rounded-lg mb-4"
@@ -289,9 +409,13 @@ export default function AdminProducts() {
             </div>
 
             <div className="space-y-2">
-              <h3 className="font-semibold text-gray-900 line-clamp-2">{product.name}</h3>
-              <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
-              
+              <h3 className="font-semibold text-gray-900 line-clamp-2">
+                {product.name}
+              </h3>
+              <p className="text-sm text-gray-600 line-clamp-2">
+                {product.description}
+              </p>
+
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-lg font-bold text-rashford-red">
@@ -303,10 +427,14 @@ export default function AdminProducts() {
                     </span>
                   )}
                 </div>
-                <span className={`text-sm font-medium ${
-                  product.inStock ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {product.inStock ? `${product.stockQuantity} in stock` : 'Out of stock'}
+                <span
+                  className={`text-sm font-medium ${
+                    product.inStock ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {product.inStock
+                    ? `${product.stockQuantity} in stock`
+                    : "Out of stock"}
                 </span>
               </div>
 
@@ -343,17 +471,15 @@ export default function AdminProducts() {
       {filteredProducts.length === 0 && (
         <div className="admin-card text-center py-12">
           <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No products found
+          </h3>
           <p className="text-gray-600 mb-6">
-            {searchQuery || selectedCategory !== 'all' 
-              ? 'Try adjusting your search or filter criteria'
-              : 'Get started by adding your first product'
-            }
+            {searchQuery || selectedCategory !== "all"
+              ? "Try adjusting your search or filter criteria"
+              : "Get started by adding your first product"}
           </p>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="btn-admin"
-          >
+          <button onClick={() => setShowAddModal(true)} className="btn-admin">
             Add Product
           </button>
         </div>
@@ -371,7 +497,7 @@ export default function AdminProducts() {
             >
               <div className="modal-header">
                 <h3 className="text-lg font-semibold">
-                  {editingProduct ? 'Edit Product' : 'Add New Product'}
+                  {editingProduct ? "Edit Product" : "Add New Product"}
                 </h3>
                 <button
                   onClick={() => {
@@ -388,18 +514,29 @@ export default function AdminProducts() {
               <form onSubmit={handleSubmit} className="modal-body space-y-6">
                 {/* Basic Information */}
                 <div>
-                  <h4 className="text-md font-semibold text-gray-900 mb-4">Basic Information</h4>
+                  <h4 className="text-md font-semibold text-gray-900 mb-4">
+                    Basic Information
+                  </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="form-group">
                       <label className="form-label">Product Name *</label>
                       <input
                         type="text"
                         value={productForm.name}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, name: e.target.value }))}
-                        className={`form-input ${errors.name ? 'border-red-500' : ''}`}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            name: e.target.value,
+                          }))
+                        }
+                        className={`form-input ${
+                          errors.name ? "border-red-500" : ""
+                        }`}
                         placeholder="Enter product name"
                       />
-                      {errors.name && <p className="form-error">{errors.name}</p>}
+                      {errors.name && (
+                        <p className="form-error">{errors.name}</p>
+                      )}
                     </div>
 
                     <div className="form-group">
@@ -407,8 +544,15 @@ export default function AdminProducts() {
                       <input
                         type="text"
                         value={productForm.sku}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, sku: e.target.value }))}
-                        className={`form-input ${errors.sku ? 'border-red-500' : ''}`}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            sku: e.target.value,
+                          }))
+                        }
+                        className={`form-input ${
+                          errors.sku ? "border-red-500" : ""
+                        }`}
                         placeholder="Enter SKU"
                       />
                       {errors.sku && <p className="form-error">{errors.sku}</p>}
@@ -418,12 +562,21 @@ export default function AdminProducts() {
                       <label className="form-label">Description *</label>
                       <textarea
                         value={productForm.description}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, description: e.target.value }))}
-                        className={`form-textarea ${errors.description ? 'border-red-500' : ''}`}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            description: e.target.value,
+                          }))
+                        }
+                        className={`form-textarea ${
+                          errors.description ? "border-red-500" : ""
+                        }`}
                         rows={3}
                         placeholder="Enter product description"
                       />
-                      {errors.description && <p className="form-error">{errors.description}</p>}
+                      {errors.description && (
+                        <p className="form-error">{errors.description}</p>
+                      )}
                     </div>
 
                     <div className="form-group">
@@ -431,47 +584,76 @@ export default function AdminProducts() {
                       <input
                         type="text"
                         value={productForm.brand}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, brand: e.target.value }))}
-                        className={`form-input ${errors.brand ? 'border-red-500' : ''}`}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            brand: e.target.value,
+                          }))
+                        }
+                        className={`form-input ${
+                          errors.brand ? "border-red-500" : ""
+                        }`}
                         placeholder="Enter brand name"
                       />
-                      {errors.brand && <p className="form-error">{errors.brand}</p>}
+                      {errors.brand && (
+                        <p className="form-error">{errors.brand}</p>
+                      )}
                     </div>
 
                     <div className="form-group">
                       <label className="form-label">Category *</label>
                       <select
                         value={productForm.category}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, category: e.target.value }))}
-                        className={`form-select ${errors.category ? 'border-red-500' : ''}`}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            category: e.target.value,
+                          }))
+                        }
+                        className={`form-select ${
+                          errors.category ? "border-red-500" : ""
+                        }`}
                       >
                         <option value="">Select category</option>
-                        {categories.map(category => (
+                        {categories.map((category) => (
                           <option key={category.id} value={category.id}>
                             {category.name}
                           </option>
                         ))}
                       </select>
-                      {errors.category && <p className="form-error">{errors.category}</p>}
+                      {errors.category && (
+                        <p className="form-error">{errors.category}</p>
+                      )}
                     </div>
                   </div>
                 </div>
 
                 {/* Pricing */}
                 <div>
-                  <h4 className="text-md font-semibold text-gray-900 mb-4">Pricing</h4>
+                  <h4 className="text-md font-semibold text-gray-900 mb-4">
+                    Pricing
+                  </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="form-group">
                       <label className="form-label">Price (₦) *</label>
                       <input
                         type="number"
                         value={productForm.price}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, price: e.target.value }))}
-                        className={`form-input ${errors.price ? 'border-red-500' : ''}`}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            price: e.target.value,
+                          }))
+                        }
+                        className={`form-input ${
+                          errors.price ? "border-red-500" : ""
+                        }`}
                         placeholder="0.00"
                         step="0.01"
                       />
-                      {errors.price && <p className="form-error">{errors.price}</p>}
+                      {errors.price && (
+                        <p className="form-error">{errors.price}</p>
+                      )}
                     </div>
 
                     <div className="form-group">
@@ -479,7 +661,12 @@ export default function AdminProducts() {
                       <input
                         type="number"
                         value={productForm.originalPrice}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, originalPrice: e.target.value }))}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            originalPrice: e.target.value,
+                          }))
+                        }
                         className="form-input"
                         placeholder="0.00"
                         step="0.01"
@@ -491,7 +678,12 @@ export default function AdminProducts() {
                       <input
                         type="number"
                         value={productForm.discountPercentage}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, discountPercentage: e.target.value }))}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            discountPercentage: e.target.value,
+                          }))
+                        }
                         className="form-input"
                         placeholder="0"
                         min="0"
@@ -503,19 +695,30 @@ export default function AdminProducts() {
 
                 {/* Inventory */}
                 <div>
-                  <h4 className="text-md font-semibold text-gray-900 mb-4">Inventory</h4>
+                  <h4 className="text-md font-semibold text-gray-900 mb-4">
+                    Inventory
+                  </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="form-group">
                       <label className="form-label">Stock Quantity *</label>
                       <input
                         type="number"
                         value={productForm.stockQuantity}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, stockQuantity: e.target.value }))}
-                        className={`form-input ${errors.stockQuantity ? 'border-red-500' : ''}`}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            stockQuantity: e.target.value,
+                          }))
+                        }
+                        className={`form-input ${
+                          errors.stockQuantity ? "border-red-500" : ""
+                        }`}
                         placeholder="0"
                         min="0"
                       />
-                      {errors.stockQuantity && <p className="form-error">{errors.stockQuantity}</p>}
+                      {errors.stockQuantity && (
+                        <p className="form-error">{errors.stockQuantity}</p>
+                      )}
                     </div>
 
                     <div className="form-group">
@@ -523,52 +726,78 @@ export default function AdminProducts() {
                       <input
                         type="text"
                         value={productForm.tags}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, tags: e.target.value }))}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            tags: e.target.value,
+                          }))
+                        }
                         className="form-input"
                         placeholder="tag1, tag2, tag3"
                       />
-                      <p className="text-xs text-gray-500 mt-1">Separate tags with commas</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Separate tags with commas
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 {/* Product Features */}
                 <div>
-                  <h4 className="text-md font-semibold text-gray-900 mb-4">Features</h4>
+                  <h4 className="text-md font-semibold text-gray-900 mb-4">
+                    Features
+                  </h4>
                   <div className="form-group">
                     <label className="form-label">Product Features</label>
                     <textarea
                       value={productForm.features}
-                      onChange={(e) => setProductForm(prev => ({ ...prev, features: e.target.value }))}
+                      onChange={(e) =>
+                        setProductForm((prev) => ({
+                          ...prev,
+                          features: e.target.value,
+                        }))
+                      }
                       className="form-textarea"
                       rows={4}
                       placeholder="Enter each feature on a new line"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Enter each feature on a new line</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Enter each feature on a new line
+                    </p>
                   </div>
                 </div>
 
                 {/* Images */}
                 <div>
-                  <h4 className="text-md font-semibold text-gray-900 mb-4">Product Images</h4>
+                  <h4 className="text-md font-semibold text-gray-900 mb-4">
+                    Product Images
+                  </h4>
                   <div
                     {...getRootProps()}
-                    className={`file-upload-area ${isDragActive ? 'dragover' : ''} ${errors.images ? 'border-red-500' : ''}`}
+                    className={`file-upload-area ${
+                      isDragActive ? "dragover" : ""
+                    } ${errors.images ? "border-red-500" : ""}`}
                   >
                     <input {...getInputProps()} />
                     <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <p className="text-gray-600 mb-2">
-                      {isDragActive ? 'Drop images here...' : 'Drag & drop images here, or click to select'}
+                      {isDragActive
+                        ? "Drop images here..."
+                        : "Drag & drop images here, or click to select"}
                     </p>
-                    <p className="text-sm text-gray-500">Supports: JPG, PNG, WebP</p>
+                    <p className="text-sm text-gray-500">
+                      Supports: JPG, PNG, WebP
+                    </p>
                   </div>
-                  {errors.images && <p className="form-error">{errors.images}</p>}
+                  {errors.images && (
+                    <p className="form-error">{errors.images}</p>
+                  )}
 
                   {productForm.images.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                       {productForm.images.map((image, index) => (
                         <div key={index} className="relative">
-                          <img
+                          <Image
                             src={image}
                             alt={`Product ${index + 1}`}
                             className="w-full h-24 object-cover rounded-lg"
@@ -588,36 +817,59 @@ export default function AdminProducts() {
 
                 {/* Product Status */}
                 <div>
-                  <h4 className="text-md font-semibold text-gray-900 mb-4">Product Status</h4>
+                  <h4 className="text-md font-semibold text-gray-900 mb-4">
+                    Product Status
+                  </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <label className="flex items-center space-x-2">
                       <input
                         type="checkbox"
                         checked={productForm.isFeatured}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, isFeatured: e.target.checked }))}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            isFeatured: e.target.checked,
+                          }))
+                        }
                         className="rounded border-gray-300 text-rashford-red focus:ring-rashford-red"
                       />
-                      <span className="text-sm font-medium text-gray-700">Featured Product</span>
+                      <span className="text-sm font-medium text-gray-700">
+                        Featured Product
+                      </span>
                     </label>
 
                     <label className="flex items-center space-x-2">
                       <input
                         type="checkbox"
                         checked={productForm.isNew}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, isNew: e.target.checked }))}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            isNew: e.target.checked,
+                          }))
+                        }
                         className="rounded border-gray-300 text-rashford-red focus:ring-rashford-red"
                       />
-                      <span className="text-sm font-medium text-gray-700">New Product</span>
+                      <span className="text-sm font-medium text-gray-700">
+                        New Product
+                      </span>
                     </label>
 
                     <label className="flex items-center space-x-2">
                       <input
                         type="checkbox"
                         checked={productForm.isOnSale}
-                        onChange={(e) => setProductForm(prev => ({ ...prev, isOnSale: e.target.checked }))}
+                        onChange={(e) =>
+                          setProductForm((prev) => ({
+                            ...prev,
+                            isOnSale: e.target.checked,
+                          }))
+                        }
                         className="rounded border-gray-300 text-rashford-red focus:ring-rashford-red"
                       />
-                      <span className="text-sm font-medium text-gray-700">On Sale</span>
+                      <span className="text-sm font-medium text-gray-700">
+                        On Sale
+                      </span>
                     </label>
                   </div>
                 </div>
@@ -636,7 +888,8 @@ export default function AdminProducts() {
                   Cancel
                 </button>
                 <button
-                  onClick={handleSubmit}
+                  type="submit"
+                  // onClick={handleSubmit}
                   disabled={isLoading}
                   className="btn-admin flex items-center gap-2"
                 >
@@ -645,7 +898,7 @@ export default function AdminProducts() {
                   ) : (
                     <Save className="w-4 h-4" />
                   )}
-                  {editingProduct ? 'Update Product' : 'Add Product'}
+                  {editingProduct ? "Update Product" : "Add Product"}
                 </button>
               </div>
             </motion.div>

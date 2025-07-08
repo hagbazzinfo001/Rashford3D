@@ -1,27 +1,38 @@
-'use client';
+"use client";
 
-import { Menu, Bell, Search, User } from 'lucide-react';
-import { useAdmin } from '@/contexts/AdminContext';
+import { Menu, Bell, Search, User } from "lucide-react";
+import { useAdmin } from "@/contexts/AdminContext";
+type AdminTab =
+  | "overview"
+  | "products"
+  | "orders"
+  | "users"
+  | "categories"
+  | "analytics"
+  | "settings";
 
 interface AdminHeaderProps {
   setSidebarOpen: (open: boolean) => void;
-  currentTab: string;
+  currentTab: AdminTab;
 }
 
-export default function AdminHeader({ setSidebarOpen, currentTab }: AdminHeaderProps) {
+export default function AdminHeader({
+  setSidebarOpen,
+  currentTab,
+}: AdminHeaderProps) {
   const { adminUser } = useAdmin();
 
-  const getPageTitle = (tab: string) => {
+  const getPageTitle = (tab: AdminTab) => {
     const titles = {
-      overview: 'Dashboard Overview',
-      products: 'Product Management',
-      orders: 'Order Management',
-      users: 'User Management',
-      categories: 'Category Management',
-      analytics: 'Sales Analytics',
-      settings: 'System Settings',
+      overview: "Dashboard Overview",
+      products: "Product Management",
+      orders: "Order Management",
+      users: "User Management",
+      categories: "Category Management",
+      analytics: "Sales Analytics",
+      settings: "System Settings",
     };
-    return titles[tab] || 'Admin Dashboard';
+    return titles[tab] || "Admin Dashboard";
   };
 
   return (
@@ -34,9 +45,11 @@ export default function AdminHeader({ setSidebarOpen, currentTab }: AdminHeaderP
           >
             <Menu className="w-5 h-5" />
           </button>
-          
+
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{getPageTitle(currentTab)}</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              {getPageTitle(currentTab)}
+            </h1>
             <p className="text-sm text-gray-600">
               Welcome back, {adminUser?.name}
             </p>
@@ -63,7 +76,7 @@ export default function AdminHeader({ setSidebarOpen, currentTab }: AdminHeaderP
           {/* Profile */}
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-rashford-red rounded-full flex items-center justify-center text-white text-sm font-bold">
-              {adminUser?.name?.charAt(0) || 'A'}
+              {adminUser?.name?.charAt(0) || "A"}
             </div>
             <span className="hidden md:block text-sm font-medium text-gray-700">
               {adminUser?.name}

@@ -67,9 +67,9 @@ export default function CartPage({
     if (validCodes.includes(promoCode.toUpperCase())) {
       setAppliedPromo({
         code: promoCode.toUpperCase(),
-        discount: Number(subtotal) * 0.1,
+        discount: subtotal * 0.1,
         type: "percentage",
-      });
+      } as Promo);
       setShowPromoInput(false);
       setPromoCode("");
     } else {

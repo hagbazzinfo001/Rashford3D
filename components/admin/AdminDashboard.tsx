@@ -1,36 +1,44 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import AdminSidebar from './AdminSidebar';
-import AdminHeader from './AdminHeader';
-import AdminOverview from './AdminOverview';
-import AdminProducts from './AdminProducts';
-import AdminOrders from './AdminOrders';
-import AdminUsers from './AdminUsers';
-import AdminCategories from './AdminCategories';
-import AdminAnalytics from './AdminAnalytics';
-import AdminSettings from './AdminSettings';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import AdminSidebar from "./AdminSidebar";
+import AdminHeader from "./AdminHeader";
+import AdminOverview from "./AdminOverview";
+import AdminProducts from "./AdminProducts";
+import AdminOrders from "./AdminOrders";
+import AdminUsers from "./AdminUsers";
+import AdminCategories from "./AdminCategories";
+import AdminAnalytics from "./AdminAnalytics";
+import AdminSettings from "./AdminSettings";
+type AdminTab =
+  | "overview"
+  | "products"
+  | "orders"
+  | "users"
+  | "categories"
+  | "analytics"
+  | "settings";
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState<AdminTab>("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'overview':
+      case "overview":
         return <AdminOverview />;
-      case 'products':
+      case "products":
         return <AdminProducts />;
-      case 'orders':
+      case "orders":
         return <AdminOrders />;
-      case 'users':
+      case "users":
         return <AdminUsers />;
-      case 'categories':
+      case "categories":
         return <AdminCategories />;
-      case 'analytics':
+      case "analytics":
         return <AdminAnalytics />;
-      case 'settings':
+      case "settings":
         return <AdminSettings />;
       default:
         return <AdminOverview />;
@@ -39,19 +47,16 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <AdminSidebar 
-        activeTab={activeTab} 
+      <AdminSidebar
+        activeTab={activeTab}
         setActiveTab={setActiveTab}
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />
-      
+
       <div className="lg:ml-64">
-        <AdminHeader 
-          setSidebarOpen={setSidebarOpen}
-          currentTab={activeTab}
-        />
-        
+        <AdminHeader setSidebarOpen={setSidebarOpen} currentTab={activeTab} />
+
         <main className="p-6">
           <AnimatePresence mode="wait">
             <motion.div
