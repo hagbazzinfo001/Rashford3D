@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LucideIcon } from "lucide-react";
-
 import {
   Search,
   ShoppingCart,
@@ -40,7 +39,6 @@ type Product = {
   images: string[];
   // add more fields as needed
 };
-
 interface NavbarProps {
   currentPage: string;
   onNavigate: (page: string, data?: any) => void;

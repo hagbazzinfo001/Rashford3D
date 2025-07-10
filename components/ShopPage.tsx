@@ -135,10 +135,11 @@ export default function ShopPage({
         filtered.sort((a, b) => b.rating - a.rating);
         break;
       case "newest":
-filtered.sort(
-  (a, b) =>
-    new Date(b.createdAt ?? '').getTime() - new Date(a.createdAt ?? '').getTime()
-);
+        filtered.sort(
+          (a, b) =>
+            new Date(b.createdAt ?? "").getTime() -
+            new Date(a.createdAt ?? "").getTime()
+        );
         break;
       case "name":
         filtered.sort((a, b) => a.name.localeCompare(b.name));
@@ -564,6 +565,8 @@ filtered.sort(
                         }`}
                       >
                         <Image
+                          width={300}
+                          height={300}
                           src={product.images[0]}
                           alt={product.name}
                           className="w-full h-full object-cover product-image"

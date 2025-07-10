@@ -487,3 +487,470 @@ export default function AdminCategories() {
     </div>
   );
 }
+// "use client";
+
+// import { useState } from "react";
+// import { motion, AnimatePresence } from "framer-motion";
+// import {
+//   Plus,
+//   Search,
+//   Edit,
+//   Trash2,
+//   Grid3X3,
+//   Save,
+//   X,
+//   Upload,
+//   Image as ImageIcon,
+//   Eye,
+//   Package,
+// } from "lucide-react";
+// import { useProducts } from "@/contexts/ProductContext";
+// import { toast } from "react-hot-toast";
+
+// export default function AdminCategories() {
+//   const { categories, addCategory, updateCategory, deleteCategory } =
+//     useProducts();
+
+//   const [searchQuery, setSearchQuery] = useState("");
+//   const [showAddModal, setShowAddModal] = useState(false);
+//   const [showEditModal, setShowEditModal] = useState(false);
+//   const [editingCategory, setEditingCategory] = useState(null);
+//   const [isLoading, setIsLoading] = useState(false);
+
+//   const [categoryForm, setCategoryForm] = useState({
+//     name: "",
+//     slug: "",
+//     description: "",
+//     image: "",
+//     parentId: "",
+//   });
+
+//   const [errors, setErrors] = useState({});
+
+//   // Filter categories
+//   const filteredCategories = categories.filter(
+//     (category) =>
+//       category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+//       category.description.toLowerCase().includes(searchQuery.toLowerCase())
+//   );
+
+//   const validateForm = () => {
+//     const newErrors = {};
+
+//     if (!categoryForm.name.trim()) newErrors.name = "Category name is required";
+//     if (!categoryForm.slug.trim()) newErrors.slug = "Category slug is required";
+//     if (!categoryForm.description.trim())
+//       newErrors.description = "Description is required";
+//     if (!categoryForm.image) newErrors.image = "Category image is required";
+
+//     setErrors(newErrors);
+//     return Object.keys(newErrors).length === 0;
+//   };
+
+//   const generateSlug = (name) => {
+//     return name
+//       .toLowerCase()
+//       .replace(/[^a-z0-9 -]/g, "")
+//       .replace(/\s+/g, "-")
+//       .replace(/-+/g, "-")
+//       .trim("-");
+//   };
+
+//   const handleNameChange = (name) => {
+//     setCategoryForm((prev) => ({
+//       ...prev,
+//       name,
+//       slug: generateSlug(name),
+//     }));
+//   };
+
+//   const handleImageUpload = (e) => {
+//     const file = e.target.files[0];
+//     if (file) {
+//       // In a real app, you would upload to Cloudinary/Firebase here
+//       const imageUrl = URL.createObjectURL(file);
+//       setCategoryForm((prev) => ({ ...prev, image: imageUrl }));
+//       toast.success("Image uploaded successfully");
+//     }
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     if (!validateForm()) return;
+
+//     setIsLoading(true);
+//     try {
+//       if (editingCategory) {
+//         await updateCategory(editingCategory.id, categoryForm);
+//         toast.success("Category updated successfully");
+//         setShowEditModal(false);
+//       } else {
+//         await addCategory(categoryForm);
+//         toast.success("Category added successfully");
+//         setShowAddModal(false);
+//       }
+
+//       resetForm();
+//     } catch (error) {
+//       toast.error(error.message || "Failed to save category");
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   const handleEdit = (category) => {
+//     setEditingCategory(category);
+//     setCategoryForm({
+//       name: category.name,
+//       slug: category.slug,
+//       description: category.description,
+//       image: category.image,
+//       parentId: category.parentId || "",
+//     });
+//     setShowEditModal(true);
+//   };
+
+//   const handleDelete = async (categoryId) => {
+//     if (
+//       window.confirm(
+//         "Are you sure you want to delete this category? This action cannot be undone."
+//       )
+//     ) {
+//       try {
+//         await deleteCategory(categoryId);
+//         toast.success("Category deleted successfully");
+//       } catch (error) {
+//         toast.error(error.message || "Failed to delete category");
+//       }
+//     }
+//   };
+
+//   const resetForm = () => {
+//     setCategoryForm({
+//       name: "",
+//       slug: "",
+//       description: "",
+//       image: "",
+//       parentId: "",
+//     });
+//     setErrors({});
+//     setEditingCategory(null);
+//   };
+
+//   return (
+//     <div className="space-y-6">
+//       {/* Header */}
+//       <div className="flex items-center justify-between">
+//         <div>
+//           <h2 className="text-2xl font-bold text-gray-900">
+//             Category Management
+//           </h2>
+//           <p className="text-gray-600">
+//             Organize your products with categories
+//           </p>
+//         </div>
+//         <motion.button
+//           whileHover={{ scale: 1.02 }}
+//           whileTap={{ scale: 0.98 }}
+//           onClick={() => setShowAddModal(true)}
+//           className="btn-admin flex items-center gap-2"
+//         >
+//           <Plus className="w-4 h-4" />
+//           Add Category
+//         </motion.button>
+//       </div>
+
+//       {/* Search */}
+//       <div className="admin-card">
+//         <div className="relative">
+//           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+//           <input
+//             type="text"
+//             value={searchQuery}
+//             onChange={(e) => setSearchQuery(e.target.value)}
+//             placeholder="Search categories..."
+//             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent"
+//           />
+//         </div>
+//       </div>
+
+//       {/* Categories Grid */}
+//       <div className="admin-grid">
+//         {filteredCategories.map((category, index) => (
+//           <motion.div
+//             key={category.id}
+//             initial={{ opacity: 0, y: 20 }}
+//             animate={{ opacity: 1, y: 0 }}
+//             transition={{ delay: index * 0.05 }}
+//             className="admin-card group"
+//           >
+//             <div className="relative">
+//               <img
+//                 src={category.image}
+//                 alt={category.name}
+//                 className="w-full h-48 object-cover rounded-lg mb-4"
+//               />
+//               <div className="absolute top-2 right-2">
+//                 <span className="bg-rashford-red text-white px-2 py-1 rounded-full text-xs font-bold">
+//                   {category.productCount} products
+//                 </span>
+//               </div>
+//             </div>
+
+//             <div className="space-y-2">
+//               <h3 className="font-semibold text-gray-900">{category.name}</h3>
+//               <p className="text-sm text-gray-600 line-clamp-2">
+//                 {category.description}
+//               </p>
+//               <p className="text-xs text-gray-500">Slug: {category.slug}</p>
+
+//               <div className="flex items-center gap-2 pt-2">
+//                 <motion.button
+//                   whileHover={{ scale: 1.05 }}
+//                   whileTap={{ scale: 0.95 }}
+//                   onClick={() => handleEdit(category)}
+//                   className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1"
+//                 >
+//                   <Edit className="w-3 h-3" />
+//                   Edit
+//                 </motion.button>
+//                 <motion.button
+//                   whileHover={{ scale: 1.05 }}
+//                   whileTap={{ scale: 0.95 }}
+//                   onClick={() => handleDelete(category.id)}
+//                   className="flex-1 bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors flex items-center justify-center gap-1"
+//                 >
+//                   <Trash2 className="w-3 h-3" />
+//                   Delete
+//                 </motion.button>
+//               </div>
+//             </div>
+//           </motion.div>
+//         ))}
+//       </div>
+
+//       {filteredCategories.length === 0 && (
+//         <div className="admin-card text-center py-12">
+//           <Grid3X3 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+//           <h3 className="text-lg font-medium text-gray-900 mb-2">
+//             No categories found
+//           </h3>
+//           <p className="text-gray-600 mb-6">
+//             {searchQuery
+//               ? "Try adjusting your search criteria"
+//               : "Get started by adding your first category"}
+//           </p>
+//           <button onClick={() => setShowAddModal(true)} className="btn-admin">
+//             Add Category
+//           </button>
+//         </div>
+//       )}
+
+//       {/* Add/Edit Category Modal */}
+//       <AnimatePresence>
+//         {(showAddModal || showEditModal) && (
+//           <div className="modal-overlay">
+//             <motion.div
+//               initial={{ opacity: 0, scale: 0.9 }}
+//               animate={{ opacity: 1, scale: 1 }}
+//               exit={{ opacity: 0, scale: 0.9 }}
+//               className="modal-content max-w-2xl"
+//             >
+//               <div className="modal-header">
+//                 <h3 className="text-lg font-semibold">
+//                   {editingCategory ? "Edit Category" : "Add New Category"}
+//                 </h3>
+//                 <button
+//                   onClick={() => {
+//                     setShowAddModal(false);
+//                     setShowEditModal(false);
+//                     resetForm();
+//                   }}
+//                   className="p-2 hover:bg-gray-100 rounded-lg"
+//                 >
+//                   <X className="w-5 h-5" />
+//                 </button>
+//               </div>
+
+//               <form onSubmit={handleSubmit} className="modal-body space-y-6">
+//                 {/* Basic Information */}
+//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                   <div className="form-group">
+//                     <label className="form-label">Category Name *</label>
+//                     <input
+//                       type="text"
+//                       value={categoryForm.name}
+//                       onChange={(e) => handleNameChange(e.target.value)}
+//                       className={`form-input ${
+//                         errors.name ? "border-red-500" : ""
+//                       }`}
+//                       placeholder="Enter category name"
+//                     />
+//                     {errors.name && <p className="form-error">{errors.name}</p>}
+//                   </div>
+
+//                   <div className="form-group">
+//                     <label className="form-label">Slug *</label>
+//                     <input
+//                       type="text"
+//                       value={categoryForm.slug}
+//                       onChange={(e) =>
+//                         setCategoryForm((prev) => ({
+//                           ...prev,
+//                           slug: e.target.value,
+//                         }))
+//                       }
+//                       className={`form-input ${
+//                         errors.slug ? "border-red-500" : ""
+//                       }`}
+//                       placeholder="category-slug"
+//                     />
+//                     {errors.slug && <p className="form-error">{errors.slug}</p>}
+//                     <p className="text-xs text-gray-500 mt-1">
+//                       URL-friendly version of the name
+//                     </p>
+//                   </div>
+//                 </div>
+
+//                 <div className="form-group">
+//                   <label className="form-label">Description *</label>
+//                   <textarea
+//                     value={categoryForm.description}
+//                     onChange={(e) =>
+//                       setCategoryForm((prev) => ({
+//                         ...prev,
+//                         description: e.target.value,
+//                       }))
+//                     }
+//                     className={`form-textarea ${
+//                       errors.description ? "border-red-500" : ""
+//                     }`}
+//                     rows={3}
+//                     placeholder="Enter category description"
+//                   />
+//                   {errors.description && (
+//                     <p className="form-error">{errors.description}</p>
+//                   )}
+//                 </div>
+
+//                 <div className="form-group">
+//                   <label className="form-label">Parent Category</label>
+//                   <select
+//                     value={categoryForm.parentId}
+//                     onChange={(e) =>
+//                       setCategoryForm((prev) => ({
+//                         ...prev,
+//                         parentId: e.target.value,
+//                       }))
+//                     }
+//                     className="form-select"
+//                   >
+//                     <option value="">No parent (Top level category)</option>
+//                     {categories
+//                       .filter(
+//                         (cat) =>
+//                           !editingCategory || cat.id !== editingCategory.id
+//                       )
+//                       .map((category) => (
+//                         <option key={category.id} value={category.id}>
+//                           {category.name}
+//                         </option>
+//                       ))}
+//                   </select>
+//                 </div>
+
+//                 {/* Category Image */}
+//                 <div className="form-group">
+//                   <label className="form-label">Category Image *</label>
+//                   <div className="space-y-4">
+//                     <div className="flex items-center space-x-4">
+//                       <input
+//                         type="file"
+//                         accept="image/*"
+//                         onChange={handleImageUpload}
+//                         className="hidden"
+//                         id="category-image"
+//                       />
+//                       <label
+//                         htmlFor="category-image"
+//                         className="cursor-pointer bg-gray-100 hover:bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center space-x-2 transition-colors"
+//                       >
+//                         <Upload className="w-5 h-5 text-gray-500" />
+//                         <span className="text-gray-600">Upload Image</span>
+//                       </label>
+//                       <span className="text-sm text-gray-500">
+//                         JPG, PNG, WebP (Max 5MB)
+//                       </span>
+//                     </div>
+
+//                     {/* Image URL Input */}
+//                     <div>
+//                       <label className="block text-sm font-medium text-gray-700 mb-2">
+//                         Or enter image URL
+//                       </label>
+//                       <input
+//                         type="url"
+//                         value={categoryForm.image}
+//                         onChange={(e) =>
+//                           setCategoryForm((prev) => ({
+//                             ...prev,
+//                             image: e.target.value,
+//                           }))
+//                         }
+//                         className={`form-input ${
+//                           errors.image ? "border-red-500" : ""
+//                         }`}
+//                         placeholder="https://example.com/image.jpg"
+//                       />
+//                     </div>
+
+//                     {errors.image && (
+//                       <p className="form-error">{errors.image}</p>
+//                     )}
+
+//                     {categoryForm.image && (
+//                       <div className="mt-4">
+//                         <img
+//                           src={categoryForm.image}
+//                           alt="Category preview"
+//                           className="w-32 h-32 object-cover rounded-lg border"
+//                         />
+//                       </div>
+//                     )}
+//                   </div>
+//                 </div>
+//               </form>
+
+//               <div className="modal-footer">
+//                 <button
+//                   type="button"
+//                   onClick={() => {
+//                     setShowAddModal(false);
+//                     setShowEditModal(false);
+//                     resetForm();
+//                   }}
+//                   className="btn-secondary"
+//                 >
+//                   Cancel
+//                 </button>
+//                 <button
+//                   onClick={handleSubmit}
+//                   disabled={isLoading}
+//                   className="btn-admin flex items-center gap-2"
+//                 >
+//                   {isLoading ? (
+//                     <div className="loading-spinner" />
+//                   ) : (
+//                     <Save className="w-4 h-4" />
+//                   )}
+//                   {editingCategory ? "Update Category" : "Add Category"}
+//                 </button>
+//               </div>
+//             </motion.div>
+//           </div>
+//         )}
+//       </AnimatePresence>
+//     </div>
+//   );
+// }

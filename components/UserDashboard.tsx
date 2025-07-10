@@ -265,7 +265,7 @@ export default function UserDashboard({
     {
       id: 2,
       title: "Total Spent",
-      value: `$${orders
+      value: `₦${orders
         .reduce((sum, order) => sum + order.total, 0)
         .toFixed(2)}`,
       icon: DollarSign,
@@ -308,7 +308,6 @@ export default function UserDashboard({
               </p>
             </div>
           </div>
-
           {/* Membership Badge */}
           <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-rashford-gold to-yellow-400 text-rashford-dark px-4 py-2 rounded-full">
             <Award className="w-4 h-4" />
@@ -317,7 +316,6 @@ export default function UserDashboard({
             </span>
           </div>
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar */}
           <div className="lg:col-span-1">
@@ -418,7 +416,7 @@ export default function UserDashboard({
                           </div>
                           <div className="text-right">
                             <p className="font-semibold text-gray-900">
-                              ${order.total}
+                              ₦{order.total}
                             </p>
                             <span
                               className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
@@ -465,7 +463,7 @@ export default function UserDashboard({
                               {item.name}
                             </h3>
                             <p className="text-lg font-bold text-rashford-red">
-                              ${item.price}
+                              ₦{item.price}
                             </p>
                           </div>
                         ))}
@@ -485,7 +483,6 @@ export default function UserDashboard({
                   </div>
                 </motion.div>
               )}
-
               {/* Orders Tab */}
               {activeTab === "orders" && (
                 <motion.div
@@ -535,7 +532,7 @@ export default function UserDashboard({
                           </div>
                           <div className="text-right">
                             <p className="text-xl font-bold text-gray-900">
-                              ${order.total}
+                              ₦{order.total}
                             </p>
                             <span
                               className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
@@ -571,7 +568,7 @@ export default function UserDashboard({
                                 </p>
                               </div>
                               <p className="font-semibold text-gray-900">
-                                ${item.price}
+                                ₦{item.price}
                               </p>
                             </div>
                           ))}
@@ -635,7 +632,6 @@ export default function UserDashboard({
                   )}
                 </motion.div>
               )}
-
               {/* Wishlist Tab */}
               {activeTab === "wishlist" && (
                 <motion.div
@@ -727,7 +723,6 @@ export default function UserDashboard({
                   )}
                 </motion.div>
               )}
-
               {/* Profile Tab */}
               {activeTab === "profile" && (
                 <motion.div
@@ -831,7 +826,7 @@ export default function UserDashboard({
                                 Total Spent
                               </label>
                               <p className="text-gray-900">
-                                $
+                                ₦
                                 {orders
                                   .reduce((sum, order) => sum + order.total, 0)
                                   .toFixed(2)}
@@ -926,7 +921,6 @@ export default function UserDashboard({
                   )}
                 </motion.div>
               )}
-
               {/* Other tabs would be implemented similarly */}
               {activeTab === "addresses" && (
                 <motion.div
@@ -984,7 +978,6 @@ export default function UserDashboard({
                   </div>
                 </motion.div>
               )}
-
               {activeTab === "payment" && (
                 <motion.div
                   key="payment"
@@ -1133,12 +1126,13 @@ export default function UserDashboard({
                             Currency
                           </label>
                           <select
-                            defaultValue={user?.preferences?.currency || "USD"}
+                            defaultValue={user?.preferences?.currency || "₦"}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent"
                           >
                             <option value="USD">USD ($)</option>
                             <option value="EUR">EUR (€)</option>
                             <option value="GBP">GBP (£)</option>
+                            <option value="NGN">NGN (₦)</option>
                           </select>
                         </div>
                         <div>

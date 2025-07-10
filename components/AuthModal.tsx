@@ -143,11 +143,10 @@ export default function AuthModal({
               mode === "register" ? "mt-9" : ""
             }`}
           >
-            {" "}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 ">
               {mode === "register" && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 ">
                     Full Name
                   </label>
                   <div className="relative">

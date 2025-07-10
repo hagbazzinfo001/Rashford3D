@@ -279,7 +279,7 @@ export default function Home() {
         categories={categories}
         products={products}
       />
-      {renderCurrentPage()}
+      {/* {renderCurrentPage()} */}
 
       {/* Auth Modal */}
       {showAuthModal && (
