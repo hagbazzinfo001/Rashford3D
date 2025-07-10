@@ -1,21 +1,29 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Lock, Mail, Eye, EyeOff, Shield, ArrowLeft } from 'lucide-react';
-import { useAdmin } from '@/contexts/AdminContext';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { toast } from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Lock, Mail, Eye, EyeOff, Shield, ArrowLeft } from "lucide-react";
+import { useAdmin } from "@/contexts/AdminContext";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { toast } from "react-hot-toast";
+interface AdminLoginFormData {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+}
 
 export default function AdminLoginPage() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+  const [formData, setFormData] = useState<AdminLoginFormData>({
+    email: "",
+    password: "",
     rememberMe: false,
   });
+
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof AdminLoginFormData, string>>
+  >({});
   const [isLoading, setIsLoading] = useState(false);
 
   const { adminLogin, isAdminAuthenticated } = useAdmin();
@@ -23,38 +31,38 @@ export default function AdminLoginPage() {
 
   useEffect(() => {
     if (isAdminAuthenticated) {
-      router.push('/admin');
+      router.push("/admin");
     }
   }, [isAdminAuthenticated, router]);
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Partial<Record<keyof AdminLoginFormData, string>> = {};
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = "Email is invalid";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
     try {
       await adminLogin(formData.email, formData.password);
-      router.push('/admin');
+      router.push("/admin");
     } catch (error) {
       // Error is handled in the admin context
     } finally {
@@ -62,10 +70,13 @@ export default function AdminLoginPage() {
     }
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (
+    field: keyof AdminLoginFormData,
+    value: string | boolean
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
@@ -92,7 +103,6 @@ export default function AdminLoginPage() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-2xl shadow-2xl overflow-hidden"
         >
-          {/* Header */}
           <div className="bg-gradient-to-r from-rashford-red to-rashford-gold p-8 text-white text-center">
             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="w-8 h-8" />
@@ -113,9 +123,9 @@ export default function AdminLoginPage() {
                   <input
                     type="email"
                     value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
                     className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent transition-all ${
-                      errors.email ? 'border-red-500' : 'border-gray-300'
+                      errors.email ? "border-red-500" : "border-gray-300"
                     }`}
                     placeholder="admin@rashford3d.com"
                   />
@@ -132,11 +142,13 @@ export default function AdminLoginPage() {
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     value={formData.password}
-                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("password", e.target.value)
+                    }
                     className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent transition-all ${
-                      errors.password ? 'border-red-500' : 'border-gray-300'
+                      errors.password ? "border-red-500" : "border-gray-300"
                     }`}
                     placeholder="Enter admin password"
                   />
@@ -145,7 +157,11 @@ export default function AdminLoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
                 {errors.password && (
@@ -158,10 +174,14 @@ export default function AdminLoginPage() {
                   <input
                     type="checkbox"
                     checked={formData.rememberMe}
-                    onChange={(e) => handleInputChange('rememberMe', e.target.checked)}
+                    onChange={(e) =>
+                      handleInputChange("rememberMe", e.target.checked)
+                    }
                     className="rounded border-gray-300 text-rashford-red focus:ring-rashford-red"
                   />
-                  <span className="ml-2 text-sm text-gray-600">Remember me</span>
+                  <span className="ml-2 text-sm text-gray-600">
+                    Remember me
+                  </span>
                 </label>
                 <Link
                   href="/admin/forgot-password"
@@ -181,15 +201,19 @@ export default function AdminLoginPage() {
                 {isLoading ? (
                   <div className="loading-spinner" />
                 ) : (
-                  'Sign In to Admin Panel'
+                  "Sign In to Admin Panel"
                 )}
               </motion.button>
             </form>
 
             {/* Demo Credentials */}
             <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Demo Credentials:</h3>
-              <p className="text-sm text-gray-600">Email: admin@rashford3d.com</p>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                Demo Credentials:
+              </h3>
+              <p className="text-sm text-gray-600">
+                Email: admin@rashford3d.com
+              </p>
               <p className="text-sm text-gray-600">Password: admin123</p>
             </div>
 

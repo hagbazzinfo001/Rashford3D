@@ -6,8 +6,13 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
+    "noImplicitAny": true,
+
     "esModuleInterop": true,
     "module": "esnext",
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
