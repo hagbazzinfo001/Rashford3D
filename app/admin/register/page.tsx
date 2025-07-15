@@ -19,6 +19,7 @@ import { useAdmin } from "@/contexts/AdminContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
+
 interface AdminFormData {
   firstName: string;
   lastName: string;
@@ -49,7 +50,7 @@ export default function AdminRegisterPage() {
   >({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const { isAdminAuthenticated } = useAdmin();
+  const { isAdminAuthenticated, adminRegister } = useAdmin();
   const router = useRouter();
 
   useEffect(() => {
@@ -121,8 +122,15 @@ export default function AdminRegisterPage() {
     setIsLoading(true);
     try {
       // Simulate admin registration request
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
+      await adminRegister({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        department: formData.department,
+        password: formData.password,
+        role: "admin", // optional: you can allow selection if needed
+      });
       toast.success(
         "Registration request submitted! You will be contacted within 24 hours."
       );

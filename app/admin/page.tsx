@@ -1,24 +1,22 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAdmin } from '@/contexts/AdminContext';
-import AdminDashboard from '@/components/admin/AdminDashboard';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAdmin } from "@/contexts/AdminContext";
+import AdminDashboard from "@/components/admin/AdminDashboard";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { useRouter } from "next/navigation";
 
 export default function AdminPage() {
   const { isAdminAuthenticated, isLoading } = useAdmin();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
-
   useEffect(() => {
     setMounted(true);
   }, []);
-
   useEffect(() => {
     if (mounted && !isLoading && !isAdminAuthenticated) {
-      router.push('/admin/login');
+      router.push("/admin/login");
     }
   }, [mounted, isLoading, isAdminAuthenticated, router]);
 

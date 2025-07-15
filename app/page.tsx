@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,15 +21,12 @@ type OrderConfirmation = {
   total: number;
   itemCount: number;
 };
-
 export default function Home() {
   const [currentPage, setCurrentPage] = useState("home");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
-
-  // const [authMode, setAuthMode] = useState("login");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000000]);
@@ -65,10 +61,6 @@ export default function Home() {
     }
   };
 
-  // const handleAuthClick = (mode: string) => {
-  //   setAuthMode(mode);
-  //   setShowAuthModal(true);
-  // };
   const handleAuthClick = (mode: "login" | "register") => {
     setAuthMode(mode);
     setShowAuthModal(true); // show the modal
