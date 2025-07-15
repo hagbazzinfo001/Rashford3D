@@ -244,6 +244,8 @@ export default function AdminCategories() {
           >
             <div className="relative">
               <Image
+                width={300}
+                height={300}
                 src={category.image}
                 alt={category.name}
                 className="w-full h-48 object-cover rounded-lg mb-4"
@@ -442,6 +444,8 @@ export default function AdminCategories() {
                   {categoryForm.image && (
                     <div className="mt-4">
                       <Image
+                        width={100}
+                        height={100}
                         src={categoryForm.image}
                         alt="Category preview"
                         className="w-32 h-32 object-cover rounded-lg"

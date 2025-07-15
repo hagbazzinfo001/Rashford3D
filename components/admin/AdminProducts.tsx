@@ -391,6 +391,8 @@ export default function AdminProducts() {
           >
             <div className="relative">
               <Image
+                width={300}
+                height={300}
                 src={product.images[0]}
                 alt={product.name}
                 className="w-full h-48 object-cover rounded-lg mb-4"
@@ -798,6 +800,8 @@ export default function AdminProducts() {
                       {productForm.images.map((image, index) => (
                         <div key={index} className="relative">
                           <Image
+                            width={100}
+                            height={100}
                             src={image}
                             alt={`Product ${index + 1}`}
                             className="w-full h-24 object-cover rounded-lg"

@@ -303,6 +303,8 @@ export default function AdminUsers() {
                   <td className="py-4 px-6">
                     <div className="flex items-center space-x-3">
                       <Image
+                        width={40}
+                        height={40}
                         src={user.avatar}
                         alt={user.name}
                         className="w-10 h-10 rounded-full"
