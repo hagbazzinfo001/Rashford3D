@@ -21,11 +21,11 @@ import Link from "next/link";
 import { toast } from "react-hot-toast";
 
 interface AdminFormData {
-  firstName: string;
-  lastName: string;
+  fullName: string;
+  userName: string;
   email: string;
   phone: string;
-  department: string;
+  role: string;
   password: string;
   confirmPassword: string;
   agreeToTerms: boolean;
@@ -33,11 +33,11 @@ interface AdminFormData {
 
 export default function AdminRegisterPage() {
   const [formData, setFormData] = useState<AdminFormData>({
-    firstName: "",
-    lastName: "",
+    fullName: "",
+    userName: "",
     email: "",
     phone: "",
-    department: "",
+    role: "",
     password: "",
     confirmPassword: "",
     agreeToTerms: false,
@@ -59,25 +59,17 @@ export default function AdminRegisterPage() {
     }
   }, [isAdminAuthenticated, router]);
 
-  const departments = [
-    "IT & Technology",
-    "Sales & Marketing",
-    "Customer Service",
-    "Operations",
-    "Finance",
-    "Human Resources",
-    "Management",
-  ];
+  const role = ["User", "Admin", "Super Admin"];
 
   const validateForm = () => {
     const newErrors: Partial<Record<keyof AdminFormData, string>> = {};
 
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = "First name is required";
     }
 
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
+    if (!formData.userName.trim()) {
+      newErrors.userName = "Last name is required";
     }
 
     if (!formData.email.trim()) {
@@ -90,8 +82,8 @@ export default function AdminRegisterPage() {
       newErrors.phone = "Phone number is required";
     }
 
-    if (!formData.department) {
-      newErrors.department = "Department is required";
+    if (!formData.role) {
+      newErrors.role = "Role is required";
     }
 
     if (!formData.password) {
@@ -123,13 +115,13 @@ export default function AdminRegisterPage() {
     try {
       // Simulate admin registration request
       await adminRegister({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+        firstName: formData.fullName,
+        lastName: formData.userName,
         email: formData.email,
         phone: formData.phone,
-        department: formData.department,
+        role: formData.role,
         password: formData.password,
-        role: "admin", // optional: you can allow selection if needed
+        // role: "admin", // optional: you can allow selection if needed
       });
       toast.success(
         "Registration request submitted! You will be contacted within 24 hours."
@@ -213,52 +205,50 @@ export default function AdminRegisterPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      First Name
+                      Full Name
                     </label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                       <input
                         type="text"
-                        value={formData.firstName}
+                        value={formData.fullName}
                         onChange={(e) =>
-                          handleInputChange("firstName", e.target.value)
+                          handleInputChange("fullName", e.target.value)
                         }
                         className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent transition-all ${
-                          errors.firstName
-                            ? "border-red-500"
-                            : "border-gray-300"
+                          errors.fullName ? "border-red-500" : "border-gray-300"
                         }`}
                         placeholder="Enter first name"
                       />
                     </div>
-                    {errors.firstName && (
+                    {errors.fullName && (
                       <p className="text-red-500 text-sm mt-1">
-                        {errors.firstName}
+                        {errors.fullName}
                       </p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Last Name
+                      User Name
                     </label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                       <input
                         type="text"
-                        value={formData.lastName}
+                        value={formData.userName}
                         onChange={(e) =>
-                          handleInputChange("lastName", e.target.value)
+                          handleInputChange("userName", e.target.value)
                         }
                         className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent transition-all ${
-                          errors.lastName ? "border-red-500" : "border-gray-300"
+                          errors.userName ? "border-red-500" : "border-gray-300"
                         }`}
                         placeholder="Enter last name"
                       />
                     </div>
-                    {errors.lastName && (
+                    {errors.userName && (
                       <p className="text-red-500 text-sm mt-1">
-                        {errors.lastName}
+                        {errors.userName}
                       </p>
                     )}
                   </div>
@@ -335,26 +325,24 @@ export default function AdminRegisterPage() {
                   <div className="relative">
                     <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <select
-                      value={formData.department}
+                      value={formData.role}
                       onChange={(e) =>
-                        handleInputChange("department", e.target.value)
+                        handleInputChange("role", e.target.value)
                       }
                       className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rashford-red focus:border-transparent transition-all ${
-                        errors.department ? "border-red-500" : "border-gray-300"
+                        errors.role ? "border-red-500" : "border-gray-300"
                       }`}
                     >
-                      <option value="">Select your department</option>
-                      {departments.map((dept) => (
+                      <option value="">Select your Role</option>
+                      {role.map((dept) => (
                         <option key={dept} value={dept}>
                           {dept}
                         </option>
                       ))}
                     </select>
                   </div>
-                  {errors.department && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.department}
-                    </p>
+                  {errors.role && (
+                    <p className="text-red-500 text-sm mt-1">{errors.role}</p>
                   )}
                 </div>
               </div>

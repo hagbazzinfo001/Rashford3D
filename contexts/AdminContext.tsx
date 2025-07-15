@@ -110,7 +110,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     try {
       const response = await fetch(
-        "http://rashroff3decommerce.somee.com/api/AdminAuth/login",
+        "https://rashroff3decommerce.somee.com/api/AdminAuth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -172,7 +172,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     try {
       const response = await fetch(
-        "http://rashroff3decommerce.somee.com/api/AdminAuth/register",
+        "https://rashroff3decommerce.somee.com/api/AdminAuth/register",
         {
           method: "POST",
           headers: {
