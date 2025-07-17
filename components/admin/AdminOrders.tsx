@@ -228,10 +228,10 @@ export default function AdminOrders() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
+      {/* <div>
         <h2 className="text-2xl font-bold text-gray-900">Order Management</h2>
         <p className="text-gray-600">Track and manage customer orders</p>
-      </div>
+      </div> */}
 
       {/* Stats Cards */}
       <div className="admin-stats-grid">

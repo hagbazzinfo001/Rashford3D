@@ -115,14 +115,14 @@ export default function AdminRegisterPage() {
     try {
       // Simulate admin registration request
       await adminRegister({
-        firstName: formData.fullName,
-        lastName: formData.userName,
+        fullName: formData.fullName,
+        userName: formData.userName,
         email: formData.email,
         phone: formData.phone,
         role: formData.role,
         password: formData.password,
-        // role: "admin", // optional: you can allow selection if needed
       });
+
       toast.success(
         "Registration request submitted! You will be contacted within 24 hours."
       );

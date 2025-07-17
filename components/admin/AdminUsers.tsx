@@ -163,10 +163,10 @@ export default function AdminUsers() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
+      {/* <div>
         <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
         <p className="text-gray-600">Manage customer accounts and user data</p>
-      </div>
+      </div> */}
 
       {/* Stats Cards */}
       <div className="admin-stats-grid">

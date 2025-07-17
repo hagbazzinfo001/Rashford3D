@@ -207,7 +207,7 @@ export default function AdminLoginPage() {
             </form>
 
             {/* Demo Credentials */}
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            {/* <div className="mt-6 p-4 bg-gray-50 rounded-lg">
               <h3 className="text-sm font-medium text-gray-700 mb-2">
                 Demo Credentials:
               </h3>
@@ -215,7 +215,7 @@ export default function AdminLoginPage() {
                 Email: admin@rashford3d.com
               </p>
               <p className="text-sm text-gray-600">Password: admin123</p>
-            </div>
+            </div> */}
 
             {/* Register Link */}
             <div className="mt-6 text-center">

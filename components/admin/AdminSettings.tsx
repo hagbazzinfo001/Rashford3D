@@ -651,7 +651,7 @@ export default function AdminSettings() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">System Settings</h2>
+          {/* <h2 className="text-2xl font-bold text-gray-900">System Settings</h2> */}
           <p className="text-gray-600">
             Configure your application settings and preferences
           </p>
