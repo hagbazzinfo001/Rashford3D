@@ -36,7 +36,7 @@ type Product = {
   name: string;
   price: number;
   description: string;
-  images: string[];
+  imageUrl: string[]; // ✅ Different name!
   // add more fields as needed
 };
 interface NavbarProps {
@@ -298,7 +298,7 @@ export default function Navbar({
                           <Image
                             width={48}
                             height={48}
-                            src={product.images[0]}
+                            src={product.imageUrl[0]}
                             alt={product.name}
                             className="w-12 h-12 object-cover rounded-lg"
                           />
@@ -582,7 +582,7 @@ export default function Navbar({
                         <Image
                           width={48}
                           height={48}
-                          src={product.images[0]}
+                          src={product.imageUrl[0]}
                           alt={product.name}
                           className="w-12 h-12 object-cover rounded-lg"
                         />

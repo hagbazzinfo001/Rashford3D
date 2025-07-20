@@ -100,7 +100,7 @@ export default function AdminCategories() {
     const newErrors: Partial<Record<keyof CategoryFormFields, string>> = {};
 
     if (!categoryForm.name.trim()) newErrors.name = "Category name is required";
-    if (!categoryForm.slug.trim()) newErrors.slug = "Category slug is required";
+    // if (!categoryForm.slug.trim()) newErrors.slug = "Category slug is required";
     if (!categoryForm.description.trim())
       newErrors.description = "Description is required";
     if (!categoryForm.imageUrl)
