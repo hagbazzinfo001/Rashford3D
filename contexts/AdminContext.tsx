@@ -181,53 +181,53 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
   // Fetch admin details from the API
   // This function can be called on initial load or when needed
-  const fetchAdminDetails = async () => {
-    const token = localStorage.getItem("rashford3d_token");
-    if (!token) return;
-    try {
-      const response = await fetch(
-        "https://rashroff3decommerce.somee.com/api/Auth/register", // Update this to the correct GET endpoint
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = await response.json();
-      if (!response.ok)
-        throw new Error(data.message || "Failed to fetch admin");
-      // Assuming the API returns an object with user details
-      const userAdmin: AdminUser = {
-        id: data.userId,
-        email: data.email,
-        username: data.username,
-        name: `${data.firstName} ${data.lastName}`,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phone: data.phone || "",
-        department: data.department || "",
-        role: data.role || "admin",
-        avatar: data.avatar || "",
-        permissions: data.permissions || [], // Adjust if needed
-        lastLogin: new Date(data.lastLogin || Date.now()),
-        createdAt: new Date(data.createdAt || Date.now()),
-        isActive: data.isActive ?? true,
-      };
-      setAdminUser(userAdmin);
-      localStorage.setItem("rashford3d_admin", JSON.stringify(userAdmin));
-    } catch (error) {
-      console.error("Error fetching admin details:", error);
-      toast.error("Could not load admin data.");
-    }
-  };
+  // const fetchAdminDetails = async () => {
+  //   const token = localStorage.getItem("rashford3d_token");
+  //   if (!token) return;
+  //   try {
+  //     const response = await fetch(
+  //       "https://rashroff3decommerce.somee.com/api/Auth/register", // Update this to the correct GET endpoint
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     const data = await response.json();
+  //     if (!response.ok)
+  //       throw new Error(data.message || "Failed to fetch admin");
+  //     // Assuming the API returns an object with user details
+  //     const userAdmin: AdminUser = {
+  //       id: data.userId,
+  //       email: data.email,
+  //       username: data.username,
+  //       name: `${data.firstName} ${data.lastName}`,
+  //       firstName: data.firstName,
+  //       lastName: data.lastName,
+  //       phone: data.phone || "",
+  //       department: data.department || "",
+  //       role: data.role || "admin",
+  //       avatar: data.avatar || "",
+  //       permissions: data.permissions || [], // Adjust if needed
+  //       lastLogin: new Date(data.lastLogin || Date.now()),
+  //       createdAt: new Date(data.createdAt || Date.now()),
+  //       isActive: data.isActive ?? true,
+  //     };
+  //     setAdminUser(userAdmin);
+  //     localStorage.setItem("rashford3d_admin", JSON.stringify(userAdmin));
+  //   } catch (error) {
+  //     console.error("Error fetching admin details:", error);
+  //     toast.error("Could not load admin data.");
+  //   }
+  // };
   ////Inside useEffect
-  useEffect(() => {
-    const token = localStorage.getItem("rashford3d_token");
-    if (token && !adminUser) {
-      fetchAdminDetails();
-    }
-  }, []);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("rashford3d_token");
+  //   if (token && !adminUser) {
+  //     fetchAdminDetails();
+  //   }
+  // }, []);
 
   // Check if the admin has a specific permission
   // This can be used to conditionally render components or restrict access

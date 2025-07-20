@@ -56,7 +56,7 @@ interface Product {
   brand: string;
   price: number;
   originalPrice?: number;
-  images: string[];
+  imageUrl: string[];
   rating: number;
   reviewCount: number;
   isFeatured?: boolean;
@@ -483,7 +483,7 @@ export default function HomePage({
                     <Image
                       width={800}
                       height={450}
-                      src={category.image}
+                      src={category.imageUrl}
                       alt={category.name}
                       className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                     />
@@ -571,7 +571,7 @@ export default function HomePage({
                   <Image
                     height={300}
                     width={400}
-                    src={product.images[0]}
+                    src={product.imageUrl[0]}
                     alt={product.name}
                     className="w-full h-64 object-cover product-image"
                   />
