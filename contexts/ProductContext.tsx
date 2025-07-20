@@ -28,13 +28,13 @@ interface Product {
   price: number;
   originalPrice?: number;
   imageUrl: string[];
-  category: string;
+  categoryId: string;
   subcategory?: string;
   brand: string;
   rating: number;
   reviewCount: number;
   inStock: boolean;
-  stockQuantity: number;
+  stock: number;
   sku: string;
   tags: string[];
   features: string[];
@@ -123,13 +123,13 @@ const mockProducts: Product[] = [
       "https://images.pexels.com/photos/4792509/pexels-photo-4792509.jpeg?auto=compress&cs=tinysrgb&w=800",
       "https://images.pexels.com/photos/5717899/pexels-photo-5717899.jpeg?auto=compress&cs=tinysrgb&w=800",
     ],
-    category: "electronics",
+    categoryId: "electronics",
     subcategory: "smart-home",
     brand: "Rashford Tech",
     rating: 4.8,
     reviewCount: 156,
     inStock: true,
-    stockQuantity: 45,
+    stock: 45,
     sku: "RSH-SH-001",
     tags: ["smart-home", "3d-printed", "iot", "wireless"],
     features: [
@@ -198,13 +198,13 @@ const mockProducts: Product[] = [
       "https://images.pexels.com/photos/6476809/pexels-photo-6476809.jpeg?auto=compress&cs=tinysrgb&w=800",
       "https://images.pexels.com/photos/4792510/pexels-photo-4792510.jpeg?auto=compress&cs=tinysrgb&w=800",
     ],
-    category: "electronics",
+    categoryId: "electronics",
     subcategory: "accessories",
     brand: "Rashford Tech",
     rating: 4.6,
     reviewCount: 89,
     inStock: true,
-    stockQuantity: 78,
+    stock: 78,
     sku: "RSH-WC-002",
     tags: ["wireless-charging", "3d-texture", "premium", "fast-charging"],
     features: [
@@ -261,13 +261,13 @@ const mockProducts: Product[] = [
       "https://images.pexels.com/photos/6195129/pexels-photo-6195129.jpeg?auto=compress&cs=tinysrgb&w=800",
       "https://images.pexels.com/photos/4792511/pexels-photo-4792511.jpeg?auto=compress&cs=tinysrgb&w=800",
     ],
-    category: "house",
+    categoryId: "house",
     subcategory: "kitchen",
     brand: "Rashford Home",
     rating: 4.7,
     reviewCount: 234,
     inStock: true,
-    stockQuantity: 32,
+    stock: 32,
     sku: "RSH-KS-003",
     tags: ["kitchen", "smart-scale", "precision", "app-connected"],
     features: [
@@ -324,13 +324,13 @@ const mockProducts: Product[] = [
       "https://images.pexels.com/photos/1095814/pexels-photo-1095814.jpeg?auto=compress&cs=tinysrgb&w=800",
       "https://images.pexels.com/photos/4792512/pexels-photo-4792512.jpeg?auto=compress&cs=tinysrgb&w=800",
     ],
-    category: "electronics",
+    categoryId: "electronics",
     subcategory: "lighting",
     brand: "Rashford Lighting",
     rating: 4.9,
     reviewCount: 678,
     inStock: true,
-    stockQuantity: 156,
+    stock: 156,
     sku: "RSH-LED-004",
     tags: [
       "smart-lighting",
@@ -392,13 +392,13 @@ const mockProducts: Product[] = [
       "https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=800",
       "https://images.pexels.com/photos/4792513/pexels-photo-4792513.jpeg?auto=compress&cs=tinysrgb&w=800",
     ],
-    category: "house",
+    categoryId: "house",
     subcategory: "kitchen",
     brand: "Rashford Home",
     rating: 4.8,
     reviewCount: 145,
     inStock: true,
-    stockQuantity: 23,
+    stock: 23,
     sku: "RSH-CM-005",
     tags: ["coffee-maker", "smart-brewing", "premium", "programmable"],
     features: [
@@ -696,7 +696,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         product.tags.some((tag) =>
           tag.toLowerCase().includes(lowercaseQuery)
         ) ||
-        product.category.toLowerCase().includes(lowercaseQuery) ||
+        product.categoryId.toLowerCase().includes(lowercaseQuery) ||
         product.brand.toLowerCase().includes(lowercaseQuery)
     );
   };
@@ -707,7 +707,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   const getProductsByCategory = (categoryId: string) => {
     if (categoryId === "all") return products;
-    return products.filter((product) => product.category === categoryId);
+    return products.filter((product) => product.categoryId === categoryId);
   };
 
   const getFeaturedProducts = () => {
@@ -727,7 +727,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     if (!product) return [];
 
     return products
-      .filter((p) => p.id !== productId && p.category === product.category)
+      .filter((p) => p.id !== productId && p.categoryId === product.categoryId)
       .slice(0, 4);
   };
 

@@ -31,15 +31,15 @@ interface Product {
   description: string;
   price: number;
   originalPrice?: number;
-  category: string;
+  categoryId: string;
   subcategory?: string;
   brand: string;
-  stockQuantity: number;
+  stock: number;
   sku: string;
   tags: string[];
   features: string[];
   specifications: Record<string, any>;
-  imageUrl: string[];
+   imageUrl: string[];
   isFeatured: boolean;
   isNew: boolean;
   isOnSale: boolean;
@@ -65,15 +65,15 @@ interface ProductFormType {
   description: string;
   price: string;
   originalPrice: string;
-  category: string;
+  categoryId: string;
   subcategory: string;
   brand: string;
-  stockQuantity: string;
+  stock: string;
   sku: string;
   tags: string;
   features: string;
   specifications: string;
-  imageUrl: string[];
+   imageUrl: string[];
   isFeatured: boolean;
   isNew: boolean;
   isOnSale: boolean;
@@ -95,15 +95,15 @@ export default function AdminProducts() {
     description: "",
     price: "",
     originalPrice: "",
-    category: "",
+    categoryId: "",
     subcategory: "",
     brand: "",
-    stockQuantity: "",
+    stock: "",
     sku: "",
     tags: "",
     features: "",
     specifications: "",
-    imageUrl: [],
+     imageUrl: [],
     isFeatured: false,
     isNew: false,
     isOnSale: false,
@@ -119,7 +119,7 @@ export default function AdminProducts() {
       product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.sku.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory =
-      selectedCategory === "all" || product.category === selectedCategory;
+      selectedCategory === "all" || product.categoryId === selectedCategory;
     return matchesSearch && matchesCategory;
   });
   // Handle file drop for image upload
@@ -133,6 +133,7 @@ export default function AdminProducts() {
         ...prev,
         imageUrl: [...prev.imageUrl, ...uploadedUrls],
       }));
+      
 
       toast.success(`${uploadedUrls.length} image(s) uploaded!`);
     } catch (error) {
@@ -156,10 +157,10 @@ export default function AdminProducts() {
       newErrors.description = "Description is required";
     if (!productForm.price || isNaN(Number(productForm.price)))
       newErrors.price = "Valid price is required";
-    if (!productForm.category) newErrors.category = "Category is required";
+    if (!productForm.categoryId) newErrors.categoryId = "Category is required";
     if (!productForm.brand.trim()) newErrors.brand = "Brand is required";
-    if (!productForm.stockQuantity || isNaN(Number(productForm.stockQuantity)))
-      newErrors.stockQuantity = "Valid stock quantity is required";
+    if (!productForm.stock || isNaN(Number(productForm.stock)))
+      newErrors.stock = "Valid stock quantity is required";
     if (!productForm.sku.trim()) newErrors.sku = "SKU is required";
     if (productForm.imageUrl.length === 0)
       newErrors.imageUrl = "At least one image is required";
@@ -181,7 +182,7 @@ export default function AdminProducts() {
         originalPrice: productForm.originalPrice
           ? Number(productForm.originalPrice)
           : undefined,
-        stockQuantity: Number(productForm.stockQuantity),
+        stock: Number(productForm.stock),
         discountPercentage: productForm.discountPercentage
           ? Number(productForm.discountPercentage)
           : undefined,
@@ -198,7 +199,7 @@ export default function AdminProducts() {
           : {},
         rating: 0,
         reviewCount: 0,
-        inStock: Number(productForm.stockQuantity) > 0,
+        inStock: Number(productForm.stock) > 0,
         reviews: [],
         shipping: {
           weight: 1,
@@ -237,10 +238,10 @@ export default function AdminProducts() {
       description: product.description,
       price: product.price.toString(),
       originalPrice: product.originalPrice?.toString() || "",
-      category: product.category,
+      categoryId: product.categoryId,
       subcategory: product.subcategory || "",
       brand: product.brand,
-      stockQuantity: product.stockQuantity.toString(),
+      stock: product.stock.toString(),
       sku: product.sku,
       tags: product.tags.join(", "),
       features: product.features.join("\n"),
@@ -275,15 +276,15 @@ export default function AdminProducts() {
       description: "",
       price: "",
       originalPrice: "",
-      category: "",
+      categoryId: "",
       subcategory: "",
       brand: "",
-      stockQuantity: "",
+      stock: "",
       sku: "",
       tags: "",
       features: "",
       specifications: "",
-      imageUrl: [],
+       imageUrl: [],
       isFeatured: false,
       isNew: false,
       isOnSale: false,
@@ -343,7 +344,7 @@ export default function AdminProducts() {
           >
             <option value="all">All Categories</option>
             {categories.map((category) => (
-              <option key={category.id} value={category.id}>
+              <option key={category.id} value={category.name}>
                 {category.name}
               </option>
             ))}
@@ -407,14 +408,14 @@ export default function AdminProducts() {
                   }`}
                 >
                   {product.inStock
-                    ? `${product.stockQuantity} in stock`
+                    ? `${product.stock} in stock`
                     : "Out of stock"}
                 </span>
               </div>
 
               <div className="flex items-center justify-between text-sm text-gray-500">
                 <span>SKU: {product.sku}</span>
-                <span className="capitalize">{product.category}</span>
+                <span className="capitalize">{product.categoryId}</span>
               </div>
 
               <div className="flex items-center gap-2 pt-2">
@@ -577,26 +578,26 @@ export default function AdminProducts() {
                     <div className="form-group">
                       <label className="form-label">Category *</label>
                       <select
-                        value={productForm.category}
+                        value={productForm.categoryId}
                         onChange={(e) =>
                           setProductForm((prev) => ({
                             ...prev,
-                            category: e.target.value,
+                            categoryId: e.target.value,
                           }))
                         }
                         className={`form-select ${
-                          errors.category ? "border-red-500" : ""
+                          errors.categoryId ? "border-red-500" : ""
                         }`}
                       >
                         <option value="">Select category</option>
                         {categories.map((category) => (
-                          <option key={category.id} value={category.id}>
+                          <option key={category.id} value={category.name}>
                             {category.name}
                           </option>
                         ))}
                       </select>
-                      {errors.category && (
-                        <p className="form-error">{errors.category}</p>
+                      {errors.categoryId && (
+                        <p className="form-error">{errors.categoryId}</p>
                       )}
                     </div>
                   </div>
@@ -677,21 +678,21 @@ export default function AdminProducts() {
                       <label className="form-label">Stock Quantity *</label>
                       <input
                         type="number"
-                        value={productForm.stockQuantity}
+                        value={productForm.stock}
                         onChange={(e) =>
                           setProductForm((prev) => ({
                             ...prev,
-                            stockQuantity: e.target.value,
+                            stock: e.target.value,
                           }))
                         }
                         className={`form-input ${
-                          errors.stockQuantity ? "border-red-500" : ""
+                          errors.stock ? "border-red-500" : ""
                         }`}
                         placeholder="0"
                         min="0"
                       />
-                      {errors.stockQuantity && (
-                        <p className="form-error">{errors.stockQuantity}</p>
+                      {errors.stock && (
+                        <p className="form-error">{errors.stock}</p>
                       )}
                     </div>
 
@@ -769,7 +770,7 @@ export default function AdminProducts() {
 
                   {productForm.imageUrl.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                      {productForm.imageUrl.map((imageUrl, index) => (
+                      {/* {productForm.imageUrl.map((imageUrl, index) => (
                         <div key={index} className="relative">
                           <Image
                             width={100}
@@ -786,7 +787,7 @@ export default function AdminProducts() {
                             <X className="w-3 h-3" />
                           </button>
                         </div>
-                      ))}
+                      ))} */}
                     </div>
                   )}
                 </div>
