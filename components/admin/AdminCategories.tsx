@@ -25,15 +25,20 @@ interface Category {
   name: string;
   slug: string;
   description: string;
-  image: string;
+  imageUrl: string;
   parentId?: string;
   productCount?: number;
 }
-type CategoryForm = Omit<Category, "id" | "productCount">;
+// type CategoryForm = Omit<Category, "id" | "productCount">;
 
 export default function AdminCategories() {
-  const { categories, addCategory, updateCategory, deleteCategory } =
-    useProducts();
+  const {
+    categories,
+    addCategory,
+    updateCategory,
+    deleteCategory,
+    fetchedCategories,
+  } = useProducts();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
@@ -45,7 +50,7 @@ export default function AdminCategories() {
     name: string;
     slug: string;
     description: string;
-    image: string;
+    imageUrl: string;
     parentId: string;
   };
 
@@ -53,7 +58,7 @@ export default function AdminCategories() {
     name: "",
     slug: "",
     description: "",
-    image: "",
+    imageUrl: "",
     parentId: "",
   });
 
@@ -61,7 +66,7 @@ export default function AdminCategories() {
     Partial<Record<keyof CategoryFormFields, string>>
   >({});
 
-  const filteredCategories = categories.filter(
+  const filteredCategories = fetchedCategories.filter(
     (category) =>
       category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       category.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -76,7 +81,7 @@ export default function AdminCategories() {
 
       setCategoryForm((prev) => ({
         ...prev,
-        image: uploadedUrl, // use for category or product
+        imageUrl: uploadedUrl, // use for category or product
       }));
 
       toast.success("Image uploaded to Cloudinary!");
@@ -98,7 +103,8 @@ export default function AdminCategories() {
     if (!categoryForm.slug.trim()) newErrors.slug = "Category slug is required";
     if (!categoryForm.description.trim())
       newErrors.description = "Description is required";
-    if (!categoryForm.image) newErrors.image = "Category image is required";
+    if (!categoryForm.imageUrl)
+      newErrors.imageUrl = "Category image is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -156,7 +162,7 @@ export default function AdminCategories() {
       name: category.name,
       slug: category.slug,
       description: category.description,
-      image: category.image,
+      imageUrl: category.imageUrl,
       parentId: category.parentId || "",
     });
     setShowEditModal(true);
@@ -186,7 +192,7 @@ export default function AdminCategories() {
       name: "",
       slug: "",
       description: "",
-      image: "",
+      imageUrl: "",
       parentId: "",
     });
     setErrors({});
@@ -194,7 +200,7 @@ export default function AdminCategories() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className=" w-[100%] space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -244,7 +250,7 @@ export default function AdminCategories() {
               <Image
                 width={300}
                 height={300}
-                src={category.image}
+                src={category.imageUrl}
                 alt={category.name}
                 className="w-full h-48 object-cover rounded-lg mb-4"
               />
@@ -390,32 +396,6 @@ export default function AdminCategories() {
                   )}
                 </div>
 
-                {/* <div className="form-group">
-                  <label className="form-label">Parent Category</label>
-                  <select
-                    value={categoryForm.parentId}
-                    onChange={(e) =>
-                      setCategoryForm((prev) => ({
-                        ...prev,
-                        parentId: e.target.value,
-                      }))
-                    }
-                    className="form-select"
-                  >
-                    <option value="">No parent (Top level category)</option>
-                    {categories
-                      .filter(
-                        (cat) =>
-                          !editingCategory || cat.id !== editingCategory.id
-                      )
-                      .map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.name}
-                        </option>
-                      ))}
-                  </select>
-                </div> */}
-
                 {/* Category Image */}
                 <div className="form-group">
                   <label className="form-label">Category Image *</label>
@@ -423,7 +403,7 @@ export default function AdminCategories() {
                     {...getRootProps()}
                     className={`file-upload-area ${
                       isDragActive ? "dragover" : ""
-                    } ${errors.image ? "border-red-500" : ""}`}
+                    } ${errors.imageUrl ? "border-red-500" : ""}`}
                   >
                     <input {...getInputProps()} />
                     <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -436,14 +416,16 @@ export default function AdminCategories() {
                       Supports: JPG, PNG, WebP
                     </p>
                   </div>
-                  {errors.image && <p className="form-error">{errors.image}</p>}
+                  {errors.imageUrl && (
+                    <p className="form-error">{errors.imageUrl}</p>
+                  )}
 
-                  {categoryForm.image && (
+                  {categoryForm.imageUrl && (
                     <div className="mt-4">
                       <Image
                         width={100}
                         height={100}
-                        src={categoryForm.image}
+                        src={categoryForm.imageUrl}
                         alt="Category preview"
                         className="w-32 h-32 object-cover rounded-lg"
                       />

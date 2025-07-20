@@ -27,7 +27,7 @@ interface Product {
   description: string;
   price: number;
   originalPrice?: number;
-  images: string[];
+  imageUrl: string[];
   category: string;
   subcategory?: string;
   brand: string;
@@ -41,11 +41,6 @@ interface Product {
   specifications: { [key: string]: string };
   variant?: variants[]; // Array of variants with size, color, etc.
 
-  // variants?: {
-  //   colors?: string[];
-  //   sizes?: string[];
-  //   materials?: string[];
-  // };
   shipping: {
     weight: number;
     dimensions: {
@@ -78,7 +73,7 @@ interface Category {
   name: string;
   slug: string;
   description: string;
-  image: string;
+  imageUrl: string;
   parentId?: string;
   subcategories?: Category[];
   productCount?: number;
@@ -88,7 +83,9 @@ interface ProductContextType {
   products: Product[];
   categories: Category[];
   isLoading: boolean;
+  setFetchedCategories: (categories: Category[]) => void;
   error: string | null;
+  fetchedCategories: Category[];
   searchProducts: (query: string) => Product[];
   getProductById: (id: string) => Product | undefined;
   getProductsByCategory: (categoryId: string) => Product[];
@@ -102,11 +99,7 @@ interface ProductContextType {
   ) => Promise<void>;
   updateProduct: (id: string, updates: Partial<Product>) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
-  // addCategory: (
-  //   category: Omit<Category, "id" | "productCount">
-  // ) => Promise<void>;
-  // updateCategory: (id: string, updates: Partial<Category>) => Promise<void>;
-  // deleteCategory: (id: string) => Promise<void>;
+
   addCategory: (
     category: Omit<Category, "id" | "productCount">
   ) => Promise<void>;
@@ -125,7 +118,7 @@ const mockProducts: Product[] = [
       "Revolutionary smart home hub with 3D printed components for maximum durability and style.",
     price: 119999.99, // ₦119,999.99
     originalPrice: 159999.99, // ₦159,999.99
-    images: [
+    imageUrl: [
       "https://images.pexels.com/photos/6476808/pexels-photo-6476808.jpeg?auto=compress&cs=tinysrgb&w=800",
       "https://images.pexels.com/photos/4792509/pexels-photo-4792509.jpeg?auto=compress&cs=tinysrgb&w=800",
       "https://images.pexels.com/photos/5717899/pexels-photo-5717899.jpeg?auto=compress&cs=tinysrgb&w=800",
@@ -200,7 +193,7 @@ const mockProducts: Product[] = [
       "Premium wireless charging pad with unique 3D textured surface for enhanced aesthetics.",
     price: 35999.99, // ₦35,999.99
     originalPrice: 47999.99, // ₦47,999.99
-    images: [
+    imageUrl: [
       "https://images.pexels.com/photos/163016/cellular-phone-charge-charging-163016.jpeg?auto=compress&cs=tinysrgb&w=800",
       "https://images.pexels.com/photos/6476809/pexels-photo-6476809.jpeg?auto=compress&cs=tinysrgb&w=800",
       "https://images.pexels.com/photos/4792510/pexels-photo-4792510.jpeg?auto=compress&cs=tinysrgb&w=800",
@@ -264,7 +257,7 @@ const mockProducts: Product[] = [
     description:
       "High-precision digital kitchen scale with 3D printed ergonomic design.",
     price: 59999.99, // ₦59,999.99
-    images: [
+    imageUrl: [
       "https://images.pexels.com/photos/6195129/pexels-photo-6195129.jpeg?auto=compress&cs=tinysrgb&w=800",
       "https://images.pexels.com/photos/4792511/pexels-photo-4792511.jpeg?auto=compress&cs=tinysrgb&w=800",
     ],
@@ -327,7 +320,7 @@ const mockProducts: Product[] = [
       "Set of 4 smart LED bulbs with 16 million colors and voice control.",
     price: 79999.99, // ₦79,999.99
     originalPrice: 99999.99, // ₦99,999.99
-    images: [
+    imageUrl: [
       "https://images.pexels.com/photos/1095814/pexels-photo-1095814.jpeg?auto=compress&cs=tinysrgb&w=800",
       "https://images.pexels.com/photos/4792512/pexels-photo-4792512.jpeg?auto=compress&cs=tinysrgb&w=800",
     ],
@@ -395,7 +388,7 @@ const mockProducts: Product[] = [
     description:
       "Premium coffee maker with 3D printed components and smart brewing technology.",
     price: 139999.99, // ₦139,999.99
-    images: [
+    imageUrl: [
       "https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=800",
       "https://images.pexels.com/photos/4792513/pexels-photo-4792513.jpeg?auto=compress&cs=tinysrgb&w=800",
     ],
@@ -459,7 +452,7 @@ const mockCategories: Category[] = [
     name: "Electronics",
     slug: "electronics",
     description: "Latest electronic gadgets and devices",
-    image:
+    imageUrl:
       "https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg?auto=compress&cs=tinysrgb&w=800",
     productCount: 3,
     subcategories: [
@@ -468,7 +461,7 @@ const mockCategories: Category[] = [
         name: "Smart Home",
         slug: "smart-home",
         description: "Smart home devices and automation",
-        image:
+        imageUrl:
           "https://images.pexels.com/photos/6476808/pexels-photo-6476808.jpeg?auto=compress&cs=tinysrgb&w=800",
         // parentId: "electronics",
         productCount: 1,
@@ -478,7 +471,7 @@ const mockCategories: Category[] = [
         name: "Accessories",
         slug: "accessories",
         description: "Electronic accessories and peripherals",
-        image:
+        imageUrl:
           "https://images.pexels.com/photos/163016/cellular-phone-charge-charging-163016.jpeg?auto=compress&cs=tinysrgb&w=800",
         // parentId: "electronics",
         productCount: 1,
@@ -488,7 +481,7 @@ const mockCategories: Category[] = [
         name: "Lighting",
         slug: "lighting",
         description: "Smart lighting solutions",
-        image:
+        imageUrl:
           "https://images.pexels.com/photos/1095814/pexels-photo-1095814.jpeg?auto=compress&cs=tinysrgb&w=800",
         // parentId: "electronics",
         productCount: 1,
@@ -500,7 +493,7 @@ const mockCategories: Category[] = [
     name: "House & Home",
     slug: "house",
     description: "Home appliances and household items",
-    image:
+    imageUrl:
       "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=800",
     productCount: 2,
     subcategories: [
@@ -509,7 +502,7 @@ const mockCategories: Category[] = [
         name: "Kitchen",
         slug: "kitchen",
         description: "Kitchen appliances and tools",
-        image:
+        imageUrl:
           "https://images.pexels.com/photos/6195129/pexels-photo-6195129.jpeg?auto=compress&cs=tinysrgb&w=800",
         // parentId: "house",
         productCount: 2,
@@ -523,118 +516,119 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [fetchedCategories, setFetchedCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  const fetchProducts = async () => {
-    setIsLoading(true);
-    setError(null);
+  // const fetchProducts = async () => {
+  //   setIsLoading(true);
+  //   setError(null);
 
-    try {
-      // Try to fetch from the API first
-      const response = await axios.get(
-        "http://rashroff3decommerce.somee.com/swagger",
-        {
-          timeout: 5000,
-        }
-      );
+  //   try {
+  //     // Try to fetch from the API first
+  //     const response = await axios.get(
+  //       "https://rashroff3decommerce.somee.com/api/ProductCategories",
+  //       {
+  //         timeout: 3000,
+  //       }
+  //     );
 
-      // If API is available, process the response
-      if (response.data && response.data.products) {
-        setProducts(response.data.products);
-        setCategories(response.data.categories || mockCategories);
-      } else {
-        // Fallback to mock data
-        setProducts(mockProducts);
-        setCategories(mockCategories);
-      }
-    } catch (error) {
-      console.warn("API not available, using mock data:", error);
-      // Use mock data as fallback
-      setProducts(mockProducts);
-      setCategories(mockCategories);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     // If API is available, process the response
+  //     if (response.data && response.data.name) {
+  //       setProducts(response.data.products);
+  //       setCategories(response.data.name || mockCategories);
+  //     } else {
+  //       // Fallback to mock data
+  //       setProducts(mockProducts);
+  //       setCategories(mockCategories);
+  //     }
+  //   } catch (error) {
+  //     console.warn("API not available, using mock data:", error);
+  //     // Use mock data as fallback
+  //     setProducts(mockProducts);
+  //     setCategories(mockCategories);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
   // Admin functions
 
-  const addProduct = async (
-    productData: Omit<Product, "id" | "createdAt" | "updatedAt">
-  ) => {
-    try {
-      const newProduct: Product = {
-        ...productData,
-        id: "product_" + Date.now(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+  // const addProduct = async (
+  //   productData: Omit<Product, "id" | "createdAt" | "updatedAt">
+  // ) => {
+  //   try {
+  //     const newProduct: Product = {
+  //       ...productData,
+  //       id: "product_" + Date.now(),
+  //       createdAt: new Date(),
+  //       updatedAt: new Date(),
+  //     };
 
-      setProducts((prev) => [...prev, newProduct]);
+  //     setProducts((prev) => [...prev, newProduct]);
 
-      // Update category product count
-      setCategories((prev) =>
-        prev.map((cat) =>
-          cat.id === newProduct.category
-            ? {
-                ...cat,
-                productCount: (cat.productCount || 0) + 1,
-              }
-            : cat
-        )
-      );
+  //     // Update category product count
+  //     setCategories((prev) =>
+  //       prev.map((cat) =>
+  //         cat.id === newProduct.category
+  //           ? {
+  //               ...cat,
+  //               productCount: (cat.productCount || 0) + 1,
+  //             }
+  //           : cat
+  //       )
+  //     );
 
-      // In a real app, this would make an API call
-      // await axios.post('/api/admin/products', newProduct);
-    } catch (error) {
-      throw new Error("Failed to add product");
-    }
-  };
-  const updateProduct = async (id: string, updates: Partial<Product>) => {
-    try {
-      setProducts((prev) =>
-        prev.map((product) =>
-          product.id === id
-            ? { ...product, ...updates, updatedAt: new Date() }
-            : product
-        )
-      );
+  //     // In a real app, this would make an API call
+  //     // await axios.post('/api/admin/products', newProduct);
+  //   } catch (error) {
+  //     throw new Error("Failed to add product");
+  //   }
+  // };
+  // const updateProduct = async (id: string, updates: Partial<Product>) => {
+  //   try {
+  //     setProducts((prev) =>
+  //       prev.map((product) =>
+  //         product.id === id
+  //           ? { ...product, ...updates, updatedAt: new Date() }
+  //           : product
+  //       )
+  //     );
 
-      // In a real app, this would make an API call
-      // await axios.put(`/api/admin/products/${id}`, updates);
-    } catch (error) {
-      throw new Error("Failed to update product");
-    }
-  };
-  const deleteProduct = async (id: string) => {
-    try {
-      const productToDelete = products.find((p) => p.id === id);
-      if (!productToDelete) return;
+  //     // In a real app, this would make an API call
+  //     // await axios.put(`/api/admin/products/${id}`, updates);
+  //   } catch (error) {
+  //     throw new Error("Failed to update product");
+  //   }
+  // };
+  // const deleteProduct = async (id: string) => {
+  //   try {
+  //     const productToDelete = products.find((p) => p.id === id);
+  //     if (!productToDelete) return;
 
-      setProducts((prev) => prev.filter((product) => product.id !== id));
+  //     setProducts((prev) => prev.filter((product) => product.id !== id));
 
-      // Update category product count
-      if (productToDelete.category) {
-        setCategories((prev) =>
-          prev.map((cat) =>
-            cat.id === productToDelete.category
-              ? {
-                  ...cat,
-                  productCount: Math.max(0, (cat.productCount || 0) - 1),
-                }
-              : cat
-          )
-        );
-      }
+  //     // Update category product count
+  //     if (productToDelete.category) {
+  //       setCategories((prev) =>
+  //         prev.map((cat) =>
+  //           cat.id === productToDelete.category
+  //             ? {
+  //                 ...cat,
+  //                 productCount: Math.max(0, (cat.productCount || 0) - 1),
+  //               }
+  //             : cat
+  //         )
+  //       );
+  //     }
 
-      // In a real app, this would make an API call
-      // await axios.delete(`/api/admin/products/${id}`);
-    } catch (error) {
-      throw new Error("Failed to delete product");
-    }
-  };
+  //     // In a real app, this would make an API call
+  //     // await axios.delete(`/api/admin/products/${id}`);
+  //   } catch (error) {
+  //     throw new Error("Failed to delete product");
+  //   }
+  // };
   // realapi
   // const fetchProducts = async () => {
   //   setIsLoading(true);
@@ -656,6 +650,36 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   //     setIsLoading(false);
   //   }
   // };
+
+  // Fetch products from API or use mock data
+  // This function will try to fetch products from the API and fall back to mock data if the API is unavailable or returns an error.
+  // It also handles the case where the API returns an unexpected response format.
+  const fetchProducts = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.get(
+        "https://rashroff3decommerce.somee.com/api/ProductCategories",
+        {
+          timeout: 3000,
+        }
+      );
+
+      // Expecting response.data to be an array of categories
+      if (Array.isArray(response.data)) {
+        setCategories(response.data);
+        setProducts(mockProducts);
+      } else {
+        setCategories(mockCategories);
+      }
+    } catch (error) {
+      console.warn("API not available, using mock data:", error);
+      setCategories(mockCategories);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const refreshProducts = async () => {
     await fetchProducts();
@@ -708,69 +732,75 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   };
 
   // realapi
-  // const addProduct = async (
-  //   productData: Omit<Product, "id" | "createdAt" | "updatedAt">
-  // ) => {
-  //   try {
-  //     const response = await axios.post(
-  //       "http://rashroff3decommerce.somee.com/api/Product",
-  //       productData
-  //     );
+  const addProduct = async (
+    productData: Omit<Product, "id" | "createdAt" | "updatedAt">
+  ) => {
+    try {
+      const response = await axios.post(
+        "http://rashroff3decommerce.somee.com/api/Products",
+        productData
+      );
 
-  //     // Optionally refresh product list or optimistically add
-  //     await fetchProducts();
-  //   } catch (error) {
-  //     console.error("Add product failed:", error);
-  //     throw new Error("Failed to add product");
-  //   }
-  // };
+      // Optionally refresh product list or optimistically add
+      if (response.status === 201) {
+        console.log("Product added successfully!");
+        await fetchProducts();
+      }
+    } catch (error) {
+      console.error("Add product failed:", error);
+      throw new Error("Failed to add product");
+    }
+  };
 
-  // const updateProduct = async (id: string, updates: Partial<Product>) => {
-  //   try {
-  //     await axios.put(
-  //       `http://rashroff3decommerce.somee.com/api/Product/${id}`,
-  //       updates
-  //     );
+  const updateProduct = async (id: string, updates: Partial<Product>) => {
+    try {
+      await axios.put(
+        `http://rashroff3decommerce.somee.com/api/Products/${id}`,
+        updates
+      );
 
-  //     await fetchProducts();
-  //   } catch (error) {
-  //     console.error("Update product failed:", error);
-  //     throw new Error("Failed to update product");
-  //   }
-  // };
-  // const deleteProduct = async (id: string) => {
-  //   try {
-  //     await axios.delete(
-  //       `http://rashroff3decommerce.somee.com/api/Product/${id}`
-  //     );
-  //     await fetchProducts();
-  //   } catch (error) {
-  //     console.error("Delete product failed:", error);
-  //     throw new Error("Failed to delete product");
-  //   }
-  // };
+      await fetchProducts();
+    } catch (error) {
+      console.error("Update product failed:", error);
+      throw new Error("Failed to update product");
+    }
+  };
+  const deleteProduct = async (id: string) => {
+    try {
+      await axios.delete(
+        `http://rashroff3decommerce.somee.com/api/Products/${id}`
+      );
+      await fetchProducts();
+    } catch (error) {
+      console.error("Delete product failed:", error);
+      throw new Error("Failed to delete product");
+    }
+  };
 
   // real api for categories
 
-  // const addCategory = async (
-  //   categoryData: Omit<Category, "id" | "productCount">
-  // ) => {
-  //   try {
-  //     const payload = {
-  //       ...categoryData,
-  //       parentId: categoryData.parentId || null,
-  //     };
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(
+        "https://rashroff3decommerce.somee.com/api/ProductCategories"
+      );
+      const data = await response.json();
 
-  //     await axios.post(
-  //       "http://rashroff3decommerce.somee.com/api/ProductCategories",
-  //       payload
-  //     );
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to fetch categories");
+      }
 
-  //     // Optionally update local state
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+      // Update local and context-based state
+      setFetchedCategories(data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      // toast.error("Failed to load categories.");
+    }
+  };
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   const addCategory = async (
     categoryData: Omit<Category, "id" | "productCount">
   ): Promise<void> => {
@@ -806,7 +836,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   ): Promise<void> => {
     try {
       const response = await axios.put(
-        `http://rashroff3decommerce.somee.com/api/Categories/${id}`,
+        `http://rashroff3decommerce.somee.com/api/ProductCategories/${id}`,
         updates
       );
 
@@ -830,7 +860,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const deleteCategory = async (id: string): Promise<void> => {
     try {
       await axios.delete(
-        `http://rashroff3decommerce.somee.com/api/Categories/${id}`
+        `http://rashroff3decommerce.somee.com/api/ProductCategories/${id}`
       );
       setCategories((prev) => prev.filter((cat) => cat.id !== id));
     } catch (error) {
@@ -842,64 +872,17 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       throw new Error("Failed to delete category");
     }
   };
-
-  // mock data=================================================
-  // const addCategory = async (
-  //   categoryData: Omit<Category, "id" | "productCount">
-  // ) => {
-  //   try {
-  //     const newCategory: Category = {
-  //       ...categoryData,
-  //       id: "category_" + Date.now(),
-  //       productCount: 0,
-  //     };
-
-  //     setCategories((prev) => [...prev, newCategory]);
-
-  //     // In a real app, this would make an API call
-  //     // await axios.post('/api/admin/categories', newCategory);
-  //   } catch (error) {
-  //     throw new Error("Failed to add category");
-  //   }
-  // };
-
-  // const updateCategory = async (id: string, updates: Partial<Category>) => {
-  //   try {
-  //     setCategories((prev) =>
-  //       prev.map((category) =>
-  //         category.id === id ? { ...category, ...updates } : category
-  //       )
-  //     );
-
-  //     // In a real app, this would make an API call
-  //     // await axios.put(`/api/admin/categories/${id}`, updates);
-  //   } catch (error) {
-  //     throw new Error("Failed to update category");
-  //   }
-  // };
-
-  // const deleteCategory = async (id: string) => {
-  //   try {
-  //     // Check if category has products
-  //     const categoryProducts = getProductsByCategory(id);
-  //     if (categoryProducts.length > 0) {
-  //       throw new Error("Cannot delete category with existing products");
-  //     }
-
-  //     setCategories((prev) => prev.filter((cat) => cat.id !== id));
-
-  //     // In a real app, this would make an API call
-  //     // await axios.delete(`/api/admin/categories/${id}`);
-  //   } catch (error) {
-  //     throw new Error("Failed to delete category");
-  //   }
-  // };
+  useEffect(() => {
+    fetchCategories();
+  }, [deleteCategory, addCategory, updateCategory]);
 
   const value = {
     products,
     categories,
     isLoading,
     error,
+    fetchedCategories,
+    setFetchedCategories,
     searchProducts,
     getProductById,
     getProductsByCategory,

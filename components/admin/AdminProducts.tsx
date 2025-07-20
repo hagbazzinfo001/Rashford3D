@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { uploadToCloudinary } from "@/lib/uploadToCloudinary";
+
 import Image from "next/image";
 import {
   Plus,
@@ -37,7 +39,7 @@ interface Product {
   tags: string[];
   features: string[];
   specifications: Record<string, any>;
-  images: string[];
+  imageUrl: string[];
   isFeatured: boolean;
   isNew: boolean;
   isOnSale: boolean;
@@ -71,7 +73,7 @@ interface ProductFormType {
   tags: string;
   features: string;
   specifications: string;
-  images: string[];
+  imageUrl: string[];
   isFeatured: boolean;
   isNew: boolean;
   isOnSale: boolean;
@@ -101,7 +103,7 @@ export default function AdminProducts() {
     tags: "",
     features: "",
     specifications: "",
-    images: [],
+    imageUrl: [],
     isFeatured: false,
     isNew: false,
     isOnSale: false,
@@ -120,21 +122,30 @@ export default function AdminProducts() {
       selectedCategory === "all" || product.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+  // Handle file drop for image upload
+  const onDrop = async (acceptedFiles: File[]) => {
+    try {
+      const uploadedUrls = await Promise.all(
+        acceptedFiles.map((file) => uploadToCloudinary(file))
+      );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: {
-      "image/*": [".jpeg", ".jpg", ".png", ".webp"],
-    },
-    multiple: true,
-    onDrop: (acceptedFiles: File[]) => {
-      // In a real app, you would upload to Cloudinary/Firebase here
-      const imageUrls = acceptedFiles.map((file) => URL.createObjectURL(file));
       setProductForm((prev) => ({
         ...prev,
-        images: [...prev.images, ...imageUrls],
+        imageUrl: [...prev.imageUrl, ...uploadedUrls],
       }));
-      toast.success(`${acceptedFiles.length} image(s) uploaded successfully`);
-    },
+
+      toast.success(`${uploadedUrls.length} image(s) uploaded!`);
+    } catch (error) {
+      console.error(error);
+      toast.error("One or more uploads failed.");
+    }
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { "image/*": [".jpeg", ".jpg", ".png", ".webp"] },
+    multiple: true,
+    maxFiles: 5, // Limit to 5 images
   });
 
   const validateForm = () => {
@@ -150,8 +161,8 @@ export default function AdminProducts() {
     if (!productForm.stockQuantity || isNaN(Number(productForm.stockQuantity)))
       newErrors.stockQuantity = "Valid stock quantity is required";
     if (!productForm.sku.trim()) newErrors.sku = "SKU is required";
-    if (productForm.images.length === 0)
-      newErrors.images = "At least one image is required";
+    if (productForm.imageUrl.length === 0)
+      newErrors.imageUrl = "At least one image is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -234,7 +245,7 @@ export default function AdminProducts() {
       tags: product.tags.join(", "),
       features: product.features.join("\n"),
       specifications: JSON.stringify(product.specifications, null, 2),
-      images: product.images,
+      imageUrl: product.imageUrl,
       isFeatured: product.isFeatured,
       isNew: product.isNew,
       isOnSale: product.isOnSale,
@@ -272,7 +283,7 @@ export default function AdminProducts() {
       tags: "",
       features: "",
       specifications: "",
-      images: [],
+      imageUrl: [],
       isFeatured: false,
       isNew: false,
       isOnSale: false,
@@ -285,7 +296,7 @@ export default function AdminProducts() {
   const removeImage = (index: number) => {
     setProductForm((prev) => ({
       ...prev,
-      images: prev.images.filter((_, i) => i !== index),
+      images: prev.imageUrl.filter((_, i) => i !== index),
     }));
   };
 
@@ -354,7 +365,7 @@ export default function AdminProducts() {
               <Image
                 width={300}
                 height={300}
-                src={product.images[0]}
+                src={product.imageUrl[0]}
                 alt={product.name}
                 className="w-full h-48 object-cover rounded-lg mb-4"
               />
@@ -739,7 +750,7 @@ export default function AdminProducts() {
                     {...getRootProps()}
                     className={`file-upload-area ${
                       isDragActive ? "dragover" : ""
-                    } ${errors.images ? "border-red-500" : ""}`}
+                    } ${errors.imageUrl ? "border-red-500" : ""}`}
                   >
                     <input {...getInputProps()} />
                     <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -752,18 +763,18 @@ export default function AdminProducts() {
                       Supports: JPG, PNG, WebP
                     </p>
                   </div>
-                  {errors.images && (
-                    <p className="form-error">{errors.images}</p>
+                  {errors.imageUrl && (
+                    <p className="form-error">{errors.imageUrl}</p>
                   )}
 
-                  {productForm.images.length > 0 && (
+                  {productForm.imageUrl.length > 0 && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                      {productForm.images.map((image, index) => (
+                      {productForm.imageUrl.map((imageUrl, index) => (
                         <div key={index} className="relative">
                           <Image
                             width={100}
                             height={100}
-                            src={image}
+                            src={imageUrl}
                             alt={`Product ${index + 1}`}
                             className="w-full h-24 object-cover rounded-lg"
                           />
