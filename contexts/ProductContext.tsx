@@ -737,7 +737,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   ) => {
     try {
       const response = await axios.post(
-        "http://rashroff3decommerce.somee.com/api/Products",
+        "https://rashroff3decommerce.somee.com/api/Products",
         productData
       );
 
@@ -755,7 +755,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const updateProduct = async (id: string, updates: Partial<Product>) => {
     try {
       await axios.put(
-        `http://rashroff3decommerce.somee.com/api/Products/${id}`,
+        `https://rashroff3decommerce.somee.com/api/Products/${id}`,
         updates
       );
 
@@ -768,7 +768,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const deleteProduct = async (id: string) => {
     try {
       await axios.delete(
-        `http://rashroff3decommerce.somee.com/api/Products/${id}`
+        `https://rashroff3decommerce.somee.com/api/Products/${id}`
       );
       await fetchProducts();
     } catch (error) {
@@ -811,7 +811,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       };
 
       const response = await axios.post(
-        "http://rashroff3decommerce.somee.com/api/ProductCategories",
+        "https://rashroff3decommerce.somee.com/api/ProductCategories",
         payload
       );
 
@@ -836,7 +836,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   ): Promise<void> => {
     try {
       const response = await axios.put(
-        `http://rashroff3decommerce.somee.com/api/ProductCategories/${id}`,
+        `https://rashroff3decommerce.somee.com/api/ProductCategories/${id}`,
         updates
       );
 
@@ -860,7 +860,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   const deleteCategory = async (id: string): Promise<void> => {
     try {
       await axios.delete(
-        `http://rashroff3decommerce.somee.com/api/ProductCategories/${id}`
+        `https://rashroff3decommerce.somee.com/api/ProductCategories/${id}`
       );
       setCategories((prev) => prev.filter((cat) => cat.id !== id));
     } catch (error) {
